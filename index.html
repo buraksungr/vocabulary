@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Vocabulary">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" id="themeColorMeta" content="#F6F8FC">
+    <title>Vocabulary</title>
+
+    <!-- Minimal Pastel Green Circle Favicon & iOS Home Screen Icon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23FFFFFF'/%3E%3Ccircle cx='256' cy='256' r='128' fill='%23A7E8BD'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" id="appleTouchIcon" sizes="180x180" href="">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        appBg: 'rgb(var(--app-bg) / <alpha-value>)',
+                        appNavy: 'rgb(var(--app-navy) / <alpha-value>)',
+                        appMuted: 'rgb(var(--app-muted) / <alpha-value>)',
+                        appCoral: '#F46955',
+                        appCoralSoft: 'rgb(var(--app-coral-soft) / <alpha-value>)',
+                        appYellow: '#F6C84C',
+                        appTeal: '#72C5B6',
+                        appLavender: '#9B93F5',
+                        appSurface: 'rgb(var(--app-surface) / <alpha-value>)',
+                        appInput: 'rgb(var(--app-input) / <alpha-value>)'
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif']
+                    },
+                    boxShadow: {
+                        soft: '0 10px 30px rgba(17, 26, 58, 0.045)',
+                        nav: '0 12px 35px rgba(17, 26, 58, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --app-bg: 246 248 252;
+            --app-surface: 255 255 255;
+            --app-navy: 17 26 58;
+            --app-muted: 148 160 184;
+            --app-input: 243 246 251;
+            --app-coral-soft: 254 240 238;
+            --ring-track: #F1F4F9;
+            --hm-empty: #F1F4F9;
+        }
+
+        html.dark {
+            --app-bg: 13 17 28;
+            --app-surface: 23 30 48;
+            --app-navy: 241 245 254;
+            --app-muted: 142 155 182;
+            --app-input: 33 42 66;
+            --app-coral-soft: 61 32 37;
+            --ring-track: #212A42;
+            --hm-empty: #212A42;
+        }
+
+        body {
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: rgb(var(--app-bg));
+            color: rgb(var(--app-navy));
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: background-color 0.22s ease, color 0.22s ease;
+        }
+
+        html.dark .bg-white {
+            background-color: rgb(var(--app-surface));
+        }
+
+        html.dark .border-slate-100 {
+            border-color: rgba(255, 255, 255, 0.07);
+        }
+
+        html.dark .shadow-soft {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+        }
+
+        html.dark .shadow-nav {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.42);
+        }
+
+        /* Shake animation for incorrect answer */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-7px); }
+            40%, 80% { transform: translateX(7px); }
+        }
+        .animate-shake {
+            animation: shake 0.36s ease-in-out;
+        }
+
+        /* Subtle pop animation for correct answer or card read */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.015); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop 0.28s ease-out;
+        }
+
+        /* Hide scrollbars cleanly */
+        ::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+    </style>
+</head>
+<body class="h-full antialiased selection:bg-appCoral/20 selection:text-appNavy overflow-x-hidden">
+
+    <!-- Main Mobile App Shell -->
+    <div class="w-full max-w-md mx-auto min-h-screen flex flex-col relative pb-28">
+
+        <!-- Shared Top Header -->
+        <header class="px-6 pt-7 pb-4 relative z-30">
+            <div class="flex items-center justify-between">
+                <h1 id="pageTitle" class="text-[28px] font-extrabold tracking-tight text-appNavy leading-none">
+                    Ana Sayfa
+                </h1>
+                <div class="flex items-center space-x-2">
+                    <button id="btnThemeToggle" class="w-10 h-10 rounded-full bg-white shadow-soft flex items-center justify-center text-appNavy hover:text-appCoral transition-colors" aria-label="Tema değiştir">
+                        <!-- Moon Icon (Shown in Light Mode) -->
+                        <svg id="iconMoon" class="w-[19px] h-[19px]" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                        <!-- Sun Icon (Shown in Dark Mode) -->
+                        <svg id="iconSun" class="w-[19px] h-[19px] hidden" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </button>
+                    <button id="btnSettingsToggle" class="w-10 h-10 rounded-full bg-white shadow-soft flex items-center justify-center text-appNavy hover:text-appCoral transition-colors" aria-label="Ayarlar">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Language Switcher Row -->
+            <div class="mt-4 flex items-center justify-between relative">
+                <button id="btnLangMenuToggle" class="flex items-center space-x-3 group text-left focus:outline-none">
+                    <div id="flagContainer" class="w-9 h-9 rounded-full overflow-hidden shadow-sm shrink-0 border border-black/5">
+                        <!-- 2D Circular SVG Flag injected by JS -->
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-1.5">
+                            <span id="langLabel" class="text-[14px] font-bold text-appNavy">İngilizce</span>
+                            <svg id="langChevron" class="w-3.5 h-3.5 text-appNavy transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                        <p id="headerProgressSub" class="text-[11px] font-medium text-appMuted">
+                            Seviye: 0 / 0 kelime
+                        </p>
+                    </div>
+                </button>
+
+                <!-- Minimal Reset Confirmation Pill -->
+                <div id="settingsPopover" class="hidden items-center space-x-2">
+                    <button id="btnResetProgress" class="px-3 py-1.5 rounded-full bg-appCoralSoft text-appCoral text-[11px] font-bold transition-all active:scale-95">
+                        İlerlemeyi Sıfırla
+                    </button>
+                </div>
+
+                <!-- Language Dropdown Menu (EN / IT / TR) -->
+                <div id="langDropdown" class="hidden absolute left-0 top-12 w-52 bg-white rounded-[20px] shadow-nav p-2 z-50 border border-slate-100">
+                    <button data-lang="EN" class="lang-option w-full flex items-center space-x-3 px-3 py-2.5 rounded-[14px] hover:bg-appInput transition-colors text-left">
+                        <span class="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-black/5" data-flag="EN"></span>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[13px] font-bold text-appNavy">İngilizce</div>
+                            <div class="text-[10px] font-medium text-appMuted">Pratik & Sözlük</div>
+                        </div>
+                    </button>
+                    <button data-lang="IT" class="lang-option w-full flex items-center space-x-3 px-3 py-2.5 rounded-[14px] hover:bg-appInput transition-colors text-left">
+                        <span class="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-black/5" data-flag="IT"></span>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[13px] font-bold text-appNavy">İtalyanca</div>
+                            <div class="text-[10px] font-medium text-appMuted">Pratik & Sözlük</div>
+                        </div>
+                    </button>
+                    <button data-lang="TR" class="lang-option w-full flex items-center space-x-3 px-3 py-2.5 rounded-[14px] hover:bg-appInput transition-colors text-left">
+                        <span class="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-black/5" data-flag="TR"></span>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[13px] font-bold text-appNavy">Türkçe</div>
+                            <div class="text-[10px] font-medium text-appMuted">Yalnızca Sözlük</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== VIEW 1: ANA SAYFA (HOME) ==================== -->
+        <section id="viewHome" class="px-6 space-y-4 flex-1">
+
+            <!-- Daily Task Card (Circular SVG Progress Ring) -->
+            <div class="bg-white rounded-[24px] p-5 shadow-soft flex items-center space-x-5">
+                <div class="relative w-[74px] h-[74px] shrink-0 flex items-center justify-center">
+                    <svg class="w-full h-full -rotate-90" viewBox="0 0 72 72">
+                        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--ring-track)" stroke-width="6"></circle>
+                        <circle id="progressRingCircle" cx="36" cy="36" r="30" fill="none" stroke="#F46955" stroke-width="6" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" class="transition-all duration-500"></circle>
+                    </svg>
+                    <span id="progressRingPercent" class="absolute text-[15px] font-extrabold text-appNavy">0%</span>
+                </div>
+                <div class="min-w-0">
+                    <h2 class="text-[15px] font-bold text-appNavy">Günlük hedef</h2>
+                    <p id="dailyTaskSubtitle" class="text-[13px] font-semibold text-appNavy/80 mt-0.5">
+                        20 kelime tamamla
+                    </p>
+                    <p id="dailyTaskDetail" class="text-[11px] font-medium text-appMuted mt-1">
+                        Bugün 0 aktivite kaydettin
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bento Quick Launch Cards -->
+            <div class="grid grid-cols-2 gap-3.5">
+                <!-- Coral Primary Action Card (Adapts to Active Language) -->
+                <button id="btnStartPrimary" class="bg-appCoral text-white rounded-[24px] p-5 text-left shadow-soft flex flex-col justify-between min-h-[152px] transition-transform active:scale-[0.98]">
+                    <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div id="primaryCardTitle" class="text-[16px] font-bold leading-snug">Pratiğe Başla</div>
+                        <div id="homeRemainingText" class="text-[11px] font-medium text-white/85 mt-0.5">0 kelime kaldı</div>
+                    </div>
+                </button>
+
+                <!-- Right Column Stacked Cards -->
+                <div class="flex flex-col space-y-3.5">
+                    <!-- Yellow Verbs / Nouns Card -->
+                    <button id="btnCategoryOne" class="bg-appYellow text-white rounded-[22px] p-4 text-left shadow-soft flex-1 flex flex-col justify-between transition-transform active:scale-[0.98]">
+                        <div class="flex items-center justify-between">
+                            <span id="catOneTitle" class="text-[14px] font-bold">Fiiller</span>
+                            <span id="catOneBadge" class="text-[11px] font-semibold bg-white/25 px-2 py-0.5 rounded-full">v.</span>
+                        </div>
+                        <span id="catOneCount" class="text-[11px] font-medium text-white/90">0 kelime</span>
+                    </button>
+
+                    <!-- Teal Adjectives Card -->
+                    <button id="btnCategoryTwo" class="bg-appTeal text-white rounded-[22px] p-4 text-left shadow-soft flex-1 flex flex-col justify-between transition-transform active:scale-[0.98]">
+                        <div class="flex items-center justify-between">
+                            <span id="catTwoTitle" class="text-[14px] font-bold">Sıfat & İsim</span>
+                            <span id="catTwoBadge" class="text-[11px] font-semibold bg-white/25 px-2 py-0.5 rounded-full">adj.</span>
+                        </div>
+                        <span id="catTwoCount" class="text-[11px] font-medium text-white/90">0 kelime</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lavender Dictionary Banner (Always Matches Active Language!) -->
+            <button id="btnBannerDictionary" class="w-full bg-appLavender text-white rounded-[24px] p-5 text-left shadow-soft flex items-center justify-between transition-transform active:scale-[0.99]">
+                <div>
+                    <div id="bannerTitle" class="text-[15px] font-bold">İngilizce Sözlük Kartları</div>
+                    <div id="bannerSub" class="text-[11px] font-medium text-white/85 mt-1">
+                        Kelimelerin kendi dilindeki sözlük tanımlarını oku
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </div>
+            </button>
+
+            <!-- Per-Language Activity Heatmap Card (Bottom of Home) -->
+            <div class="bg-white rounded-[24px] p-5 shadow-soft">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h2 class="text-[14px] font-bold text-appNavy">Çalışma Isı Haritası</h2>
+                        <p id="heatmapSelectedInfo" class="text-[11px] font-medium text-appMuted mt-0.5">
+                            Son 12 hafta aktivitesi
+                        </p>
+                    </div>
+                    <!-- Mini Language Switcher for Heatmap -->
+                    <div class="flex items-center bg-appInput p-1 rounded-full">
+                        <button data-hm-lang="EN" class="hm-tab px-2.5 py-1 rounded-full text-[10px] font-bold transition-all">EN</button>
+                        <button data-hm-lang="IT" class="hm-tab px-2.5 py-1 rounded-full text-[10px] font-bold transition-all">IT</button>
+                        <button data-hm-lang="TR" class="hm-tab px-2.5 py-1 rounded-full text-[10px] font-bold transition-all">TR</button>
+                    </div>
+                </div>
+
+                <!-- 12 Weeks x 7 Days 2D Heatmap Grid -->
+                <div id="heatmapGrid" class="grid grid-flow-col grid-rows-7 gap-[4px] py-1">
+                    <!-- Rendered dynamically by JS -->
+                </div>
+
+                <!-- Heatmap Footer: Stats & Legend -->
+                <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <div class="text-[11px] font-semibold text-appNavy">
+                        <span id="heatmapTotalCount">0</span> aktivite
+                        <span class="text-appMuted font-medium mx-1">·</span>
+                        <span class="text-appMuted font-medium">Seri:</span> <span id="homeStreakDisplay">0</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <span class="text-[10px] font-medium text-appMuted mr-0.5">Az</span>
+                        <span class="w-2.5 h-2.5 rounded-[3px] bg-appInput"></span>
+                        <span id="hmLegend1" class="w-2.5 h-2.5 rounded-[3px]"></span>
+                        <span id="hmLegend2" class="w-2.5 h-2.5 rounded-[3px]"></span>
+                        <span id="hmLegend3" class="w-2.5 h-2.5 rounded-[3px]"></span>
+                        <span class="text-[10px] font-medium text-appMuted ml-0.5">Çok</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 2: PRATİK (PRACTICE) ==================== -->
+        <section id="viewPractice" class="px-6 flex-1 flex flex-col justify-center hidden">
+
+            <!-- Turkish Notice (Shown only when TR is selected) -->
+            <div id="practiceTrNotice" class="hidden bg-white rounded-[28px] p-7 shadow-soft text-center space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-[#F3F2FE] text-appLavender mx-auto flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-[17px] font-bold text-appNavy">Türkçe Yalnızca Sözlük Modunda</h2>
+                    <p class="text-[13px] font-medium text-appMuted mt-1.5 leading-relaxed">
+                        Türkçe kelimelerde çeviri pratiği yerine sözlük kartlarını okuyarak alıştırma yapabilirsin.
+                    </p>
+                </div>
+                <button id="btnGoToTrDict" class="w-full py-3.5 rounded-[18px] bg-appLavender text-white text-[14px] font-bold active:scale-[0.98] transition-all">
+                    Sözlük Kartlarına Git
+                </button>
+            </div>
+
+            <!-- Standard Practice Content (EN / IT) -->
+            <div id="practiceActiveWrap">
+                <!-- Filter Pill Bar -->
+                <div class="flex items-center space-x-2 mb-4 overflow-x-auto pb-1">
+                    <button data-filter="all" class="filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-bold bg-appNavy text-white transition-all shrink-0">
+                        Tümü
+                    </button>
+                    <button data-filter="v" class="filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0">
+                        Fiiller (v.)
+                    </button>
+                    <button data-filter="n" class="filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0">
+                        İsimler (n.)
+                    </button>
+                    <button data-filter="adj" class="filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0">
+                        Sıfatlar (adj.)
+                    </button>
+                </div>
+
+                <!-- Main Practice Card -->
+                <div id="wordCard" class="bg-white rounded-[28px] p-6 shadow-soft flex flex-col justify-between min-h-[340px] border-2 border-transparent transition-all duration-200">
+
+                    <!-- Card Top Meta -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span id="wordRank" class="px-2.5 py-1 rounded-full bg-appInput text-[11px] font-bold text-appMuted">
+                                #1
+                            </span>
+                            <span id="practiceStreakBadge" class="px-2.5 py-1 rounded-full bg-appCoralSoft text-[11px] font-bold text-appCoral">
+                                Seri: 0
+                            </span>
+                        </div>
+
+                        <!-- Audio Pronunciation Button -->
+                        <button id="btnAudio" class="w-10 h-10 rounded-full bg-appInput text-appNavy hover:text-appCoral flex items-center justify-center transition-colors active:scale-95" aria-label="Telaffuzu dinle">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Target Word + Part of Speech -->
+                    <div class="my-8 text-center">
+                        <div class="inline-flex flex-wrap items-baseline justify-center gap-x-2.5 gap-y-1">
+                            <h2 id="targetWord" class="text-[36px] font-extrabold tracking-tight text-appNavy leading-tight">
+                                make
+                            </h2>
+                            <span id="partOfSpeech" class="text-[15px] font-semibold text-appMuted">
+                                (v.)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Input & Feedback Area -->
+                    <div class="space-y-3">
+                        <form id="answerForm" onsubmit="return false;">
+                            <input
+                                type="text"
+                                id="answerInput"
+                                placeholder="Türkçe anlamını yaz..."
+                                autocomplete="off"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                class="w-full px-4 py-4 text-center text-[15px] font-semibold bg-appInput text-appNavy placeholder-appMuted rounded-[18px] border-2 border-transparent focus:outline-none focus:border-appCoral focus:bg-white transition-all"
+                            >
+                        </form>
+
+                        <!-- Meaning Reveal Box -->
+                        <div id="meaningReveal" class="hidden px-4 py-3 rounded-[16px] bg-appInput text-center text-[12px] font-medium text-appMuted">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center space-x-2.5 pt-1">
+                            <button id="btnAction" class="flex-1 py-3.5 rounded-[18px] bg-appCoral text-white text-[14px] font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all">
+                                Kontrol Et
+                            </button>
+                            <button id="btnSkip" class="px-5 py-3.5 rounded-[18px] bg-appInput text-appMuted text-[14px] font-bold hover:text-appNavy active:scale-[0.98] transition-all">
+                                Pas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-center text-[11px] font-medium text-appMuted mt-4">
+                    Kelimenin herhangi bir Türkçe anlamını yazman yeterlidir.
+                </p>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 3: SÖZLÜK (DICTIONARY CARDS) ==================== -->
+        <section id="viewDictionary" class="px-6 flex-1 flex flex-col justify-center hidden">
+
+            <!-- Dictionary Filter Pills -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2 overflow-x-auto pb-1">
+                    <button data-dict-filter="all" class="dict-filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-bold bg-appNavy text-white transition-all shrink-0">
+                        Tümü
+                    </button>
+                    <button data-dict-filter="unread" class="dict-filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0">
+                        Okunmayanlar
+                    </button>
+                    <button data-dict-filter="read" class="dict-filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0">
+                        Okunanlar
+                    </button>
+                </div>
+                <span id="dictCounter" class="text-[11px] font-bold text-appMuted shrink-0 ml-2">1 / 1</span>
+            </div>
+
+            <!-- Interactive Monolingual Dictionary Card -->
+            <div id="dictCard" class="bg-white rounded-[28px] p-6 shadow-soft flex flex-col justify-between min-h-[370px] border-2 border-transparent transition-all duration-200">
+
+                <!-- Card Top Meta -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span id="dictRank" class="px-2.5 py-1 rounded-full bg-appInput text-[11px] font-bold text-appMuted">
+                            #1
+                        </span>
+                        <span id="dictReadBadge" class="hidden px-2.5 py-1 rounded-full bg-[#EEF9F6] text-[11px] font-bold text-appTeal">
+                            Okundu
+                        </span>
+                    </div>
+
+                    <button id="btnDictAudio" class="w-10 h-10 rounded-full bg-appInput text-appNavy hover:text-appCoral flex items-center justify-center transition-colors active:scale-95" aria-label="Telaffuzu dinle">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Word + Own-Language Definition -->
+                <div class="my-6">
+                    <div class="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                        <h2 id="dictWord" class="text-[32px] font-extrabold tracking-tight text-appNavy leading-tight">
+                            make
+                        </h2>
+                        <span id="dictPos" class="text-[14px] font-semibold text-appMuted">
+                            (v.)
+                        </span>
+                    </div>
+
+                    <!-- Native Dictionary Definition Box -->
+                    <div class="mt-5 p-4 rounded-[18px] bg-appInput">
+                        <div id="dictDefLabel" class="text-[10px] font-bold uppercase tracking-wider text-appMuted mb-1.5">
+                            Sözlük Tanımı
+                        </div>
+                        <p id="dictDefinition" class="text-[14px] font-semibold text-appNavy leading-relaxed">
+                            To form something by putting parts together or combining substances.
+                        </p>
+                    </div>
+
+                    <!-- Optional Turkish Meaning Toggle (Only for EN & IT) -->
+                    <div id="dictTrToggleWrap" class="mt-3">
+                        <button id="btnToggleDictTr" class="text-[12px] font-bold text-appLavender hover:opacity-80 transition-opacity">
+                            Türkçe karşılığını göster
+                        </button>
+                        <div id="dictTrMeaningBox" class="hidden mt-2 px-3.5 py-2.5 rounded-[14px] bg-appLavender/15 text-[12px] font-semibold text-appNavy">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation & Study Controls -->
+                <div class="flex items-center space-x-2.5 pt-1">
+                    <button id="btnDictPrev" class="w-12 h-12 rounded-[16px] bg-appInput text-appNavy flex items-center justify-center active:scale-95 transition-transform shrink-0" aria-label="Önceki kart">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+
+                    <button id="btnDictMarkRead" class="flex-1 h-12 rounded-[16px] bg-appCoral text-white text-[13px] font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all">
+                        Okudum & Sonraki
+                    </button>
+
+                    <button id="btnDictNext" class="w-12 h-12 rounded-[16px] bg-appInput text-appNavy flex items-center justify-center active:scale-95 transition-transform shrink-0" aria-label="Sonraki kart">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-center text-[11px] font-medium text-appMuted mt-4">
+                Her okuduğun kart, ilgili dilin ısı haritasına işlenir.
+            </p>
+        </section>
+
+        <!-- ==================== VIEW 4: KELİMELER (WORD LIST) ==================== -->
+        <section id="viewWords" class="px-6 space-y-4 flex-1 hidden">
+
+            <!-- Search Input -->
+            <div class="relative">
+                <svg class="w-4 h-4 text-appMuted absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                    type="text"
+                    id="wordSearchInput"
+                    placeholder="Kelime veya tanım ara..."
+                    class="w-full pl-11 pr-4 py-3.5 bg-white rounded-[18px] shadow-soft text-[13px] font-medium text-appNavy placeholder-appMuted focus:outline-none focus:ring-2 focus:ring-appCoral/30"
+                >
+            </div>
+
+            <!-- Sub-tabs -->
+            <div class="flex items-center space-x-5 px-1 text-[13px] font-bold">
+                <button id="tabWordsAll" class="flex items-center space-x-1.5 text-appNavy">
+                    <span class="w-1.5 h-1.5 rounded-full bg-appNavy"></span>
+                    <span>Tüm Kelimeler</span>
+                </button>
+                <button id="tabWordsLearned" class="flex items-center space-x-1.5 text-appMuted">
+                    <span id="tabWordsDoneLabel">Öğrenilenler</span>
+                </button>
+            </div>
+
+            <!-- Cards List -->
+            <div id="wordListContainer" class="space-y-3 pb-4">
+                <!-- Rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- ==================== FLOATING 4-TAB BOTTOM NAVIGATION BAR ==================== -->
+        <nav class="fixed bottom-5 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-[390px] bg-white rounded-[26px] shadow-nav px-3 py-2.5 flex items-center justify-around z-40">
+            <!-- Nav: Ana Sayfa -->
+            <button id="navHome" class="nav-btn flex flex-col items-center space-y-1 px-2.5 py-1 text-appNavy transition-colors">
+                <svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="text-[10px] font-bold">Ana Sayfa</span>
+            </button>
+
+            <!-- Nav: Pratik -->
+            <button id="navPractice" class="nav-btn flex flex-col items-center space-y-1 px-2.5 py-1 text-appMuted transition-colors">
+                <svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span class="text-[10px] font-semibold">Pratik</span>
+            </button>
+
+            <!-- Nav: Sözlük -->
+            <button id="navDictionary" class="nav-btn flex flex-col items-center space-y-1 px-2.5 py-1 text-appMuted transition-colors">
+                <svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span class="text-[10px] font-semibold">Sözlük</span>
+            </button>
+
+            <!-- Nav: Kelimeler -->
+            <button id="navWords" class="nav-btn flex flex-col items-center space-y-1 px-2.5 py-1 text-appMuted transition-colors">
+                <svg class="w-[21px] h-[21px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span class="text-[10px] font-semibold">Kelimeler</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <script>
+        /**
+         * Curated Vocabulary Datasets with Monolingual Dictionary Definitions (`def`)
+         * - EN: English words with English definitions + Turkish accepted answers
+         * - IT: Italian words with Italian definitions + Turkish accepted answers
+         * - TR: Rich Turkish words with Turkish dictionary definitions (Dictionary-only mode)
+         */
+        const DATASETS = {
+            EN: [
+                { id: "e1", word: "be", pos: "v.", meanings: ["olmak", "bulunmak"], def: "To exist, live, or occupy a particular place or state.", rank: 1 },
+                { id: "e2", word: "have", pos: "v.", meanings: ["sahip olmak", "var olmak", "almak"], def: "To possess, own, hold, or experience something.", rank: 2 },
+                { id: "e3", word: "do", pos: "v.", meanings: ["yapmak", "etmek"], def: "To perform an action, task, or activity.", rank: 3 },
+                { id: "e4", word: "say", pos: "v.", meanings: ["söylemek", "demek"], def: "To utter words so as to convey information, an opinion, or a feeling.", rank: 4 },
+                { id: "e5", word: "get", pos: "v.", meanings: ["almak", "edinmek", "ulaşmak", "olmak"], def: "To come to have or hold something; to receive or reach a state.", rank: 5 },
+                { id: "e6", word: "make", pos: "v. / n.", meanings: ["yapmak", "üretmek", "oluşturmak", "marka"], def: "To form something by putting parts together or combining substances; a brand.", rank: 6 },
+                { id: "e7", word: "go", pos: "v.", meanings: ["gitmek"], def: "To move from one place or point to another; to travel.", rank: 7 },
+                { id: "e8", word: "know", pos: "v.", meanings: ["bilmek", "tanımak"], def: "To be aware of through observation, inquiry, or information.", rank: 8 },
+                { id: "e9", word: "take", pos: "v.", meanings: ["almak", "götürmek", "sürmek"], def: "To lay hold of something with one's hands; to carry or require time.", rank: 9 },
+                { id: "e10", word: "see", pos: "v.", meanings: ["görmek", "anlamak", "görüşmek"], def: "To perceive with the eyes; to discern or understand.", rank: 10 },
+                { id: "e11", word: "come", pos: "v.", meanings: ["gelmek"], def: "To move or travel toward or into a place thought of as near.", rank: 11 },
+                { id: "e12", word: "think", pos: "v.", meanings: ["düşünmek", "sanmak"], def: "To have a particular opinion, belief, or idea; to direct one's mind.", rank: 12 },
+                { id: "e13", word: "look", pos: "v. / n.", meanings: ["bakmak", "görünmek", "bakış"], def: "To direct one's gaze in a specified direction; an appearance.", rank: 13 },
+                { id: "e14", word: "want", pos: "v. / n.", meanings: ["istemek", "istek"], def: "To have a desire to possess or do something; a wish or need.", rank: 14 },
+                { id: "e15", word: "give", pos: "v.", meanings: ["vermek"], def: "To freely transfer the possession of something to someone.", rank: 15 },
+                { id: "e16", word: "use", pos: "v. / n.", meanings: ["kullanmak", "kullanım"], def: "To take, hold, or deploy something as a means of accomplishing a purpose.", rank: 16 },
+                { id: "e17", word: "find", pos: "v.", meanings: ["bulmak"], def: "To discover or perceive by chance, search, or effort.", rank: 17 },
+                { id: "e18", word: "tell", pos: "v.", meanings: ["anlatmak", "söylemek"], def: "To communicate information, facts, or stories to someone.", rank: 18 },
+                { id: "e19", word: "ask", pos: "v.", meanings: ["sormak", "istemek", "rica etmek"], def: "To say something in order to obtain an answer or request an action.", rank: 19 },
+                { id: "e20", word: "work", pos: "v. / n.", meanings: ["çalışmak", "iş", "eser"], def: "Activity involving mental or physical effort done to achieve a purpose.", rank: 20 },
+                { id: "e21", word: "seem", pos: "v.", meanings: ["görünmek", "gibi görünmek"], def: "To give the impression or sensation of being something.", rank: 21 },
+                { id: "e22", word: "feel", pos: "v. / n.", meanings: ["hissetmek", "his"], def: "To experience an emotion, sensation, or physical touch.", rank: 22 },
+                { id: "e23", word: "try", pos: "v. / n.", meanings: ["denemek", "çabalamak", "deneme"], def: "To make an attempt or effort to do or accomplish something.", rank: 23 },
+                { id: "e24", word: "leave", pos: "v. / n.", meanings: ["ayrılmak", "bırakmak", "terk etmek", "izin"], def: "To go away from a place; to allow something to remain; official permission.", rank: 24 },
+                { id: "e25", word: "call", pos: "v. / n.", meanings: ["aramak", "çağırmak", "adlandırmak", "çağrı"], def: "To cry out, contact by phone, or give a specified name to.", rank: 25 },
+                { id: "e26", word: "time", pos: "n. / v.", meanings: ["zaman", "vakit", "kez", "zamanlamak"], def: "The indefinite continued progress of existence and events.", rank: 26 },
+                { id: "e27", word: "year", pos: "n.", meanings: ["yıl", "sene"], def: "The period of 365 days taken by the earth to orbit the sun.", rank: 27 },
+                { id: "e28", word: "people", pos: "n.", meanings: ["insanlar", "halk"], def: "Human beings in general or considered collectively.", rank: 28 },
+                { id: "e29", word: "way", pos: "n.", meanings: ["yol", "yöntem", "tarz"], def: "A method, style, or manner of doing something; a road or path.", rank: 29 },
+                { id: "e30", word: "day", pos: "n.", meanings: ["gün", "gündüz"], def: "A period of twenty-four hours as a unit of time.", rank: 30 },
+                { id: "e31", word: "man", pos: "n.", meanings: ["adam", "erkek", "insan"], def: "An adult male human being.", rank: 31 },
+                { id: "e32", word: "thing", pos: "n.", meanings: ["şey", "nesne"], def: "An object that one need not, cannot, or does not wish to name specifically.", rank: 32 },
+                { id: "e33", word: "woman", pos: "n.", meanings: ["kadın"], def: "An adult female human being.", rank: 33 },
+                { id: "e34", word: "life", pos: "n.", meanings: ["hayat", "yaşam", "ömür"], def: "The existence of an individual human being or living organism.", rank: 34 },
+                { id: "e35", word: "child", pos: "n.", meanings: ["çocuk"], def: "A young human being below the age of full physical development.", rank: 35 },
+                { id: "e36", word: "world", pos: "n.", meanings: ["dünya"], def: "The earth, together with all of its countries, peoples, and natural features.", rank: 36 },
+                { id: "e37", word: "school", pos: "n.", meanings: ["okul"], def: "An institution designed for educating students.", rank: 37 },
+                { id: "e38", word: "state", pos: "n. / v.", meanings: ["devlet", "durum", "eyalet", "belirtmek"], def: "The particular condition of someone or something; a nation or territory.", rank: 38 },
+                { id: "e39", word: "family", pos: "n.", meanings: ["aile"], def: "A group consisting of parents and children living together or related by blood.", rank: 39 },
+                { id: "e40", word: "student", pos: "n.", meanings: ["öğrenci"], def: "A person who is studying at a school, college, or university.", rank: 40 },
+                { id: "e41", word: "good", pos: "adj.", meanings: ["iyi", "güzel"], def: "To be desired or approved of; having the required qualities.", rank: 41 },
+                { id: "e42", word: "new", pos: "adj.", meanings: ["yeni"], def: "Produced, introduced, or discovered recently or for the first time.", rank: 42 },
+                { id: "e43", word: "first", pos: "adj. / adv.", meanings: ["ilk", "birinci", "önce"], def: "Coming before all others in time, order, or importance.", rank: 43 },
+                { id: "e44", word: "last", pos: "adj. / v.", meanings: ["son", "geçen", "sürmek", "dayanmak"], def: "Coming after all others in time or order; to continue for a period of time.", rank: 44 },
+                { id: "e45", word: "long", pos: "adj. / adv.", meanings: ["uzun"], def: "Measuring a great distance from end to end; lasting a great amount of time.", rank: 45 },
+                { id: "e46", word: "great", pos: "adj.", meanings: ["harika", "büyük", "mükemmel"], def: "Of an extent, amount, or intensity considerably above average.", rank: 46 },
+                { id: "e47", word: "little", pos: "adj. / adv.", meanings: ["küçük", "az", "biraz"], def: "Small in size, amount, or degree.", rank: 47 },
+                { id: "e48", word: "own", pos: "adj. / v.", meanings: ["kendi", "sahip olmak"], def: "Belonging to oneself or itself; to have as one's property.", rank: 48 },
+                { id: "e49", word: "other", pos: "adj.", meanings: ["diğer", "başka", "öteki"], def: "Used to refer to a person or thing that is different from one already mentioned.", rank: 49 },
+                { id: "e50", word: "old", pos: "adj.", meanings: ["eski", "yaşlı"], def: "Having lived for a long time; no longer young or new.", rank: 50 },
+                { id: "e51", word: "right", pos: "adj. / n.", meanings: ["doğru", "sağ", "hak"], def: "Morally good, justified, or true; the side opposite to left; a legal entitlement.", rank: 51 },
+                { id: "e52", word: "big", pos: "adj.", meanings: ["büyük", "iri"], def: "Of considerable size, extent, or importance.", rank: 52 },
+                { id: "e53", word: "high", pos: "adj.", meanings: ["yüksek"], def: "Of great vertical extent; situated far above the ground.", rank: 53 },
+                { id: "e54", word: "different", pos: "adj.", meanings: ["farklı", "değişik"], def: "Not the same as another or each other; distinct in nature or form.", rank: 54 },
+                { id: "e55", word: "small", pos: "adj.", meanings: ["küçük", "ufak"], def: "Of a size that is less than normal or usual.", rank: 55 },
+                { id: "e56", word: "large", pos: "adj.", meanings: ["geniş", "büyük"], def: "Of considerable or relatively great size, extent, or capacity.", rank: 56 },
+                { id: "e57", word: "next", pos: "adj. / adv.", meanings: ["sonraki", "gelecek", "yanındaki"], def: "Coming immediately after the time or position of the present one.", rank: 57 },
+                { id: "e58", word: "early", pos: "adj. / adv.", meanings: ["erken"], def: "Happening or done before the usual or expected time.", rank: 58 },
+                { id: "e59", word: "young", pos: "adj.", meanings: ["genç"], def: "Having lived or existed for only a short time.", rank: 59 },
+                { id: "e60", word: "important", pos: "adj.", meanings: ["önemli"], def: "Of great significance, value, or consequence.", rank: 60 },
+                { id: "e61", word: "run", pos: "v. / n.", meanings: ["koşmak", "çalıştırmak", "yönetmek", "koşu"], def: "To move at a speed faster than a walk; to manage or operate a system.", rank: 61 },
+                { id: "e62", word: "set", pos: "v. / n.", meanings: ["kurmak", "ayarlamak", "koymak", "takım", "set"], def: "To put, lay, or stand in a specified place; a group of related items.", rank: 62 },
+                { id: "e63", word: "keep", pos: "v.", meanings: ["tutmak", "saklamak", "korumak", "devam etmek"], def: "To have or retain possession of; to continue in a specified condition.", rank: 63 },
+                { id: "e64", word: "hold", pos: "v. / n.", meanings: ["tutmak", "düzenlemek", "beklemek"], def: "To grasp, carry, or support with one's arms or hands; to organize an event.", rank: 64 },
+                { id: "e65", word: "turn", pos: "v. / n.", meanings: ["dönmek", "çevirmek", "sıra", "dönüş"], def: "To move in a circular direction around an axis; an opportunity in a sequence.", rank: 65 },
+                { id: "e66", word: "move", pos: "v. / n.", meanings: ["hareket etmek", "taşınmak", "hamle"], def: "To go in a specified direction or change position; to change residence.", rank: 66 },
+                { id: "e67", word: "live", pos: "v. / adj.", meanings: ["yaşamak", "canlı"], def: "To remain alive or make one's home in a particular place; not recorded.", rank: 67 },
+                { id: "e68", word: "believe", pos: "v.", meanings: ["inanmak"], def: "To accept that something is true, especially without physical proof.", rank: 68 },
+                { id: "e69", word: "bring", pos: "v.", meanings: ["getirmek"], def: "To take or go with someone or something to a place.", rank: 69 },
+                { id: "e70", word: "happen", pos: "v.", meanings: ["olmak", "gerçekleşmek", "meydana gelmek"], def: "To take place or occur, especially without being planned.", rank: 70 },
+                { id: "e71", word: "write", pos: "v.", meanings: ["yazmak"], def: "To mark letters, words, or symbols on a surface or digital screen.", rank: 71 },
+                { id: "e72", word: "sit", pos: "v.", meanings: ["oturmak"], def: "To adopt or be in a resting position supported by the buttocks.", rank: 72 },
+                { id: "e73", word: "stand", pos: "v. / n.", meanings: ["ayakta durmak", "durmak", "katlanmak", "tezgah"], def: "To be in an upright position on one's feet; to endure something.", rank: 73 },
+                { id: "e74", word: "lose", pos: "v.", meanings: ["kaybetmek"], def: "To be deprived of or cease to have or retain something.", rank: 74 },
+                { id: "e75", word: "pay", pos: "v. / n.", meanings: ["ödemek", "maaş", "ödeme"], def: "To give someone money that is due for work done or goods received.", rank: 75 },
+                { id: "e76", word: "meet", pos: "v.", meanings: ["tanışmak", "buluşmak", "karşılamak"], def: "To come into the presence or company of someone by chance or arrangement.", rank: 76 },
+                { id: "e77", word: "change", pos: "v. / n.", meanings: ["değişmek", "değiştirmek", "değişim", "bozuk para"], def: "To make or become different; coins as opposed to paper currency.", rank: 77 },
+                { id: "e78", word: "play", pos: "v. / n.", meanings: ["oynamak", "çalmak", "oyun"], def: "To engage in activity for enjoyment; to perform on a musical instrument.", rank: 78 },
+                { id: "e79", word: "light", pos: "n. / adj. / v.", meanings: ["ışık", "hafif", "açık", "yakmak"], def: "The natural agent that stimulates sight; of little weight; pale in color.", rank: 79 },
+                { id: "e80", word: "fair", pos: "adj. / n.", meanings: ["adil", "fuar", "sarışın", "makul"], def: "Treating people equally without favoritism; a gathering of stalls and amusements.", rank: 80 },
+                { id: "e81", word: "bear", pos: "n. / v.", meanings: ["ayı", "katlanmak", "taşımak"], def: "A large heavy mammal; to carry the weight of or endure difficulty.", rank: 81 },
+                { id: "e82", word: "watch", pos: "v. / n.", meanings: ["izlemek", "kol saati", "saat", "nöbet"], def: "To look at or observe attentively over a period of time; a small timepiece.", rank: 82 },
+                { id: "e83", word: "book", pos: "n. / v.", meanings: ["kitap", "rezervasyon yapmak", "ayırtmak"], def: "A written or printed work consisting of pages; to reserve in advance.", rank: 83 },
+                { id: "e84", word: "point", pos: "n. / v.", meanings: ["nokta", "puan", "işaret etmek", "amaç"], def: "A particular spot, detail, or unit of scoring; to direct attention toward.", rank: 84 },
+                { id: "e85", word: "place", pos: "n. / v.", meanings: ["yer", "mekan", "yerleştirmek"], def: "A particular position or point in space; to put in a particular position.", rank: 85 },
+                { id: "e86", word: "hand", pos: "n. / v.", meanings: ["el", "uzatmak", "vermek"], def: "The end part of a person's arm beyond the wrist; to pick up and give.", rank: 86 },
+                { id: "e87", word: "part", pos: "n. / v.", meanings: ["parça", "bölüm", "rol", "ayrılmak"], def: "A piece or segment of something which combined with others makes up the whole.", rank: 87 },
+                { id: "e88", word: "case", pos: "n.", meanings: ["durum", "dava", "kutu", "kılıf"], def: "An instance of a particular situation; a container designed to hold something.", rank: 88 },
+                { id: "e89", word: "week", pos: "n.", meanings: ["hafta"], def: "A period of seven consecutive days.", rank: 89 },
+                { id: "e90", word: "company", pos: "n.", meanings: ["şirket", "firma", "eşlik"], def: "A commercial business; the fact or condition of being with another person.", rank: 90 },
+                { id: "e91", word: "water", pos: "n. / v.", meanings: ["su", "sulamak"], def: "A colorless, transparent, odorless liquid essential for life.", rank: 91 },
+                { id: "e92", word: "room", pos: "n.", meanings: ["oda", "yer", "alan"], def: "A part or division of a building enclosed by walls; space that can be occupied.", rank: 92 },
+                { id: "e93", word: "mother", pos: "n.", meanings: ["anne"], def: "A woman in relation to her child or children.", rank: 93 },
+                { id: "e94", word: "area", pos: "n.", meanings: ["alan", "bölge"], def: "A region or part of a town, country, or surface.", rank: 94 },
+                { id: "e95", word: "money", pos: "n.", meanings: ["para"], def: "A current medium of exchange in the form of coins and banknotes.", rank: 95 },
+                { id: "e96", word: "story", pos: "n.", meanings: ["hikaye", "öykü", "kat"], def: "An account of imaginary or real people and events told for entertainment.", rank: 96 },
+                { id: "e97", word: "fact", pos: "n.", meanings: ["gerçek", "olgu"], def: "A thing that is indisputably the case and can be proven true.", rank: 97 },
+                { id: "e98", word: "month", pos: "n.", meanings: ["ay"], def: "Each of the twelve named periods into which a year is divided.", rank: 98 },
+                { id: "e99", word: "study", pos: "v. / n.", meanings: ["çalışmak", "ders çalışmak", "incelemek", "çalışma"], def: "The devotion of time and attention to acquiring knowledge on an academic subject.", rank: 99 },
+                { id: "e100", word: "clear", pos: "adj. / v.", meanings: ["açık", "net", "berrak", "temizlemek"], def: "Easy to perceive, understand, or interpret; transparent and unobstructed.", rank: 100 }
+            ],
+            IT: [
+                { id: "i1", word: "essere", pos: "v.", meanings: ["olmak", "bulunmak"], def: "Esistere, trovarsi in un luogo o in una determinata condizione.", rank: 1 },
+                { id: "i2", word: "avere", pos: "v.", meanings: ["sahip olmak", "var olmak"], def: "Possedere qualcosa, disporre di un bene o provare una sensazione.", rank: 2 },
+                { id: "i3", word: "fare", pos: "v.", meanings: ["yapmak", "etmek"], def: "Compiere un'azione, creare, produrre o realizzare qualcosa.", rank: 3 },
+                { id: "i4", word: "dire", pos: "v.", meanings: ["söylemek", "demek"], def: "Esprimere con parole un pensiero, un'opinione o un'informazione.", rank: 4 },
+                { id: "i5", word: "andare", pos: "v.", meanings: ["gitmek"], def: "Spostarsi da un luogo verso un altro; procedere in una direzione.", rank: 5 },
+                { id: "i6", word: "potere", pos: "v. / n.", meanings: ["yapabilmek", "güç", "yetki"], def: "Avere la capacità, la possibilità o l'autorità di fare qualcosa.", rank: 6 },
+                { id: "i7", word: "volere", pos: "v.", meanings: ["istemek"], def: "Desiderare fortemente qualcosa o avere l'intenzione di agire.", rank: 7 },
+                { id: "i8", word: "sapere", pos: "v.", meanings: ["bilmek"], def: "Conoscere un fatto, avere cognizione o essere capace di fare qualcosa.", rank: 8 },
+                { id: "i9", word: "stare", pos: "v.", meanings: ["kalmak", "durmak", "olmak"], def: "Rimanere in un luogo o in una posizione; trovarsi in uno stato di salute.", rank: 9 },
+                { id: "i10", word: "dovere", pos: "v. / n.", meanings: ["zorunda olmak", "görev", "ödev", "borç"], def: "Essere obbligato a fare qualcosa; compito morale o giuridico.", rank: 10 },
+                { id: "i11", word: "vedere", pos: "v.", meanings: ["görmek"], def: "Percepire con gli occhi la forma e il colore delle cose.", rank: 11 },
+                { id: "i12", word: "dare", pos: "v.", meanings: ["vermek"], def: "Consegnare, offrire o cedere qualcosa a qualcuno.", rank: 12 },
+                { id: "i13", word: "parlare", pos: "v.", meanings: ["konuşmak"], def: "Comunicare a voce esprimendo pensieri e sentimenti.", rank: 13 },
+                { id: "i14", word: "trovare", pos: "v.", meanings: ["bulmak"], def: "Scoprire o rintracciare ciò che si cercava o che era perduto.", rank: 14 },
+                { id: "i15", word: "sentire", pos: "v.", meanings: ["duymak", "hissetmek", "işitmek"], def: "Percepire suoni con l'udito oppure provare un'emozione o sensazione.", rank: 15 },
+                { id: "i16", word: "lasciare", pos: "v.", meanings: ["bırakmak", "terk etmek", "izin vermek"], def: "Abbandonare un luogo o una persona; permettere che accada qualcosa.", rank: 16 },
+                { id: "i17", word: "prendere", pos: "v.", meanings: ["almak", "tutmak", "binmek"], def: "Afferrare con le mani, ricevere o salire su un mezzo di trasporto.", rank: 17 },
+                { id: "i18", word: "guardare", pos: "v.", meanings: ["bakmak", "izlemek"], def: "Rivolgere lo sguardo con attenzione verso qualcosa o qualcuno.", rank: 18 },
+                { id: "i19", word: "mettere", pos: "v.", meanings: ["koymak", "giymek", "yerleştirmek"], def: "Collocare un oggetto in un posto determinato; indossare un abito.", rank: 19 },
+                { id: "i20", word: "pensare", pos: "v.", meanings: ["düşünmek", "sanmak"], def: "Riflettere con la mente, formulare idee o avere un'opinione.", rank: 20 },
+                { id: "i21", word: "passare", pos: "v.", meanings: ["geçmek", "geçirmek", "uzatmak"], def: "Attraversare un luogo, trascorrere del tempo o porgere qualcosa.", rank: 21 },
+                { id: "i22", word: "credere", pos: "v.", meanings: ["inanmak", "sanmak"], def: "Ritenere vero qualcosa o avere fiducia in una persona.", rank: 22 },
+                { id: "i23", word: "portare", pos: "v.", meanings: ["taşımak", "getirmek", "götürmek"], def: "Trasportare qualcosa o accompagnare qualcuno da un luogo a un altro.", rank: 23 },
+                { id: "i24", word: "venire", pos: "v.", meanings: ["gelmek"], def: "Muoversi verso il luogo in cui si trova chi parla o chi ascolta.", rank: 24 },
+                { id: "i25", word: "tornare", pos: "v.", meanings: ["dönmek", "geri dönmek"], def: "Andare o venire di nuovo nel luogo da cui si era partiti.", rank: 25 },
+                { id: "i26", word: "tempo", pos: "n.", meanings: ["zaman", "hava", "tempo"], def: "Dimensione in cui si susseguono gli eventi; condizioni atmosferiche.", rank: 26 },
+                { id: "i27", word: "cosa", pos: "n.", meanings: ["şey", "nesne"], def: "Termine generico per indicare un oggetto, un fatto o un argomento.", rank: 27 },
+                { id: "i28", word: "anno", pos: "n.", meanings: ["yıl", "sene"], def: "Periodo di dodici mesi corrispondente a un giro della Terra intorno al Sole.", rank: 28 },
+                { id: "i29", word: "giorno", pos: "n.", meanings: ["gün", "gündüz"], def: "Spazio di ventiquattro ore; le ore illuminate dal sole.", rank: 29 },
+                { id: "i30", word: "uomo", pos: "n.", meanings: ["adam", "erkek", "insan"], def: "Essere umano di sesso maschile; l'umanità nel suo insieme.", rank: 30 },
+                { id: "i31", word: "donna", pos: "n.", meanings: ["kadın"], def: "Essere umano adulto di sesso femminile.", rank: 31 },
+                { id: "i32", word: "casa", pos: "n.", meanings: ["ev", "yuva"], def: "Edificio o appartamento destinato ad abitazione di una famiglia.", rank: 32 },
+                { id: "i33", word: "vita", pos: "n.", meanings: ["hayat", "yaşam", "bel"], def: "L'esistenza di un essere vivente dalla nascita alla morte.", rank: 33 },
+                { id: "i34", word: "mano", pos: "n.", meanings: ["el"], def: "Estremità del braccio umano provvista di cinque dita.", rank: 34 },
+                { id: "i35", word: "occhio", pos: "n.", meanings: ["göz"], def: "Organo della vista situato nella parte anteriore del volto.", rank: 35 },
+                { id: "i36", word: "ora", pos: "n. / adv.", meanings: ["saat", "şimdi"], def: "Unità di misura del tempo di sessanta minuti; nel momento presente.", rank: 36 },
+                { id: "i37", word: "mondo", pos: "n.", meanings: ["dünya"], def: "Il pianeta Terra insieme a tutti gli esseri che lo abitano.", rank: 37 },
+                { id: "i38", word: "parola", pos: "n.", meanings: ["kelime", "söz", "sözcük"], def: "Unità linguistica dotata di significato usata per comunicare.", rank: 38 },
+                { id: "i39", word: "lavoro", pos: "n.", meanings: ["iş", "çalışma"], def: "Attività fisica o intellettuale svolta per produrre un bene o guadagnare.", rank: 39 },
+                { id: "i40", word: "stato", pos: "n.", meanings: ["devlet", "durum"], def: "Comunità politica sovrana; condizione in cui si trova qualcosa.", rank: 40 },
+                { id: "i41", word: "bello", pos: "adj.", meanings: ["güzel", "hoş", "yakışıklı"], def: "Che suscita piacere estetico, ammirazione o gioia.", rank: 41 },
+                { id: "i42", word: "grande", pos: "adj.", meanings: ["büyük", "yüce"], def: "Che supera la misura ordinaria per dimensioni o importanza.", rank: 42 },
+                { id: "i43", word: "piccolo", pos: "adj.", meanings: ["küçük", "ufak"], def: "Di dimensioni, quantità o età inferiori alla media.", rank: 43 },
+                { id: "i44", word: "buono", pos: "adj.", meanings: ["iyi", "lezzetli"], def: "Dotato di qualità positive, gradevole al gusto o moralmente retto.", rank: 44 },
+                { id: "i45", word: "nuovo", pos: "adj.", meanings: ["yeni"], def: "Creato, apparso o acquistato di recente; mai usato prima.", rank: 45 },
+                { id: "i46", word: "vecchio", pos: "adj.", meanings: ["eski", "yaşlı"], def: "Avanti negli anni; che esiste o è in uso da molto tempo.", rank: 46 },
+                { id: "i47", word: "vero", pos: "adj.", meanings: ["gerçek", "doğru"], def: "Conforme alla realtà, autentico e non falso.", rank: 47 },
+                { id: "i48", word: "giusto", pos: "adj.", meanings: ["doğru", "haklı", "adil"], def: "Conforme alla giustizia, alla ragione o all'esattezza.", rank: 48 },
+                { id: "i49", word: "lungo", pos: "adj.", meanings: ["uzun"], def: "Che ha grande estensione nello spazio o nella durata temporale.", rank: 49 },
+                { id: "i50", word: "alto", pos: "adj.", meanings: ["yüksek", "uzun boylu"], def: "Che si eleva molto in verticale rispetto al suolo o alla media.", rank: 50 },
+                { id: "i51", word: "piano", pos: "adv. / n. / adj.", meanings: ["yavaş", "kat", "plan", "piyano", "düz"], def: "Lentamente o a bassa voce; superficie piatta; progetto organizzato.", rank: 51 },
+                { id: "i52", word: "solo", pos: "adj. / adv.", meanings: ["yalnız", "sadece", "tek"], def: "Senza compagnia; unico oppure limitatamente a qualcosa.", rank: 52 },
+                { id: "i53", word: "molto", pos: "adj. / adv.", meanings: ["çok", "fazla"], def: "In grande quantità, misura o intensità.", rank: 53 },
+                { id: "i54", word: "poco", pos: "adj. / adv.", meanings: ["az", "biraz"], def: "In piccola quantità o misura; non sufficiente.", rank: 54 },
+                { id: "i55", word: "bene", pos: "adv. / n.", meanings: ["iyi", "iyilik", "güzel"], def: "In modo corretto o soddisfacente; ciò che è positivo e giusto.", rank: 55 },
+                { id: "i56", word: "male", pos: "adv. / n.", meanings: ["kötü", "ağrı", "kötülük"], def: "In modo negativo o errato; dolore fisico o sofferenza.", rank: 56 },
+                { id: "i57", word: "sempre", pos: "adv.", meanings: ["her zaman", "daima", "hep"], def: "In ogni tempo, continuamente e senza eccezione.", rank: 57 },
+                { id: "i58", word: "mai", pos: "adv.", meanings: ["asla", "hiç", "hiçbir zaman"], def: "In nessun tempo e in nessuna circostanza.", rank: 58 },
+                { id: "i59", word: "oggi", pos: "adv.", meanings: ["bugün"], def: "Nel giorno presente, in questo stesso giorno.", rank: 59 },
+                { id: "i60", word: "domani", pos: "adv.", meanings: ["yarın"], def: "Il giorno che segue immediatamente quello presente.", rank: 60 },
+                { id: "i61", word: "ieri", pos: "adv.", meanings: ["dün"], def: "Il giorno che precede immediatamente quello presente.", rank: 61 },
+                { id: "i62", word: "subito", pos: "adv.", meanings: ["hemen", "derhal"], def: "Immediatamente, senza alcun indugio o ritardo.", rank: 62 },
+                { id: "i63", word: "capire", pos: "v.", meanings: ["anlamak"], def: "Comprendere con la mente il significato o la causa di qualcosa.", rank: 63 },
+                { id: "i64", word: "scrivere", pos: "v.", meanings: ["yazmak"], def: "Tracciare segni grafici o lettere per comporre un testo.", rank: 64 },
+                { id: "i65", word: "leggere", pos: "v.", meanings: ["okumak"], def: "Scorrere con gli occhi un testo scritto comprendendone il senso.", rank: 65 },
+                { id: "i66", word: "mangiare", pos: "v.", meanings: ["yemek", "yemek yemek"], def: "Introdurre cibo nella bocca, masticarlo e ingerirlo per nutrirsi.", rank: 66 },
+                { id: "i67", word: "bere", pos: "v.", meanings: ["içmek"], def: "Ingerire un liquido, come acqua o caffè, per dissetarsi.", rank: 67 },
+                { id: "i68", word: "dormire", pos: "v.", meanings: ["uyumak"], def: "Riposare nello stato fisiologico del sonno.", rank: 68 },
+                { id: "i69", word: "vivere", pos: "v.", meanings: ["yaşamak"], def: "Essere in vita; abitare in un luogo o fare esperienze.", rank: 69 },
+                { id: "i70", word: "amare", pos: "v.", meanings: ["sevmek", "aşık olmak"], def: "Provare un profondo affetto, passione o grande apprezzamento.", rank: 70 },
+                { id: "i71", word: "aprire", pos: "v.", meanings: ["açmak"], def: "Rimuovere ciò che chiude un passaggio o un contenitore.", rank: 71 },
+                { id: "i72", word: "chiudere", pos: "v.", meanings: ["kapatmak"], def: "Serrare una porta, un libro o terminare un'attività.", rank: 72 },
+                { id: "i73", word: "cercare", pos: "v.", meanings: ["aramak", "çalışmak"], def: "Adoperarsi per trovare qualcosa o sforzarsi di ottenere un risultato.", rank: 73 },
+                { id: "i74", word: "chiamare", pos: "v.", meanings: ["aramak", "çağırmak"], def: "Invitare qualcuno ad avvicinarsi o contattarlo telefonicamente.", rank: 74 },
+                { id: "i75", word: "conoscere", pos: "v.", meanings: ["tanımak", "bilmek"], def: "Avere esperienza diretta di una persona, di un luogo o di un argomento.", rank: 75 },
+                { id: "i76", word: "acqua", pos: "n.", meanings: ["su"], def: "Liquido trasparente e inodore indispensabile per la vita.", rank: 76 },
+                { id: "i77", word: "strada", pos: "n.", meanings: ["yol", "cadde", "sokak"], def: "Via pubblica destinata al transito di persone e veicoli.", rank: 77 },
+                { id: "i78", word: "amico", pos: "n.", meanings: ["arkadaş", "dost"], def: "Persona a cui si è legati da un sentimento di sincero affetto e fiducia.", rank: 78 },
+                { id: "i79", word: "famiglia", pos: "n.", meanings: ["aile"], def: "Nucleo sociale composto da genitori, figli e parenti stretti.", rank: 79 },
+                { id: "i80", word: "città", pos: "n.", meanings: ["şehir", "kent"], def: "Centro abitato di grandi dimensioni con servizi e infrastrutture.", rank: 80 },
+                { id: "i81", word: "libro", pos: "n.", meanings: ["kitap"], def: "Insieme di fogli stampati e rilegati che contengono un'opera scritta.", rank: 81 },
+                { id: "i82", word: "cuore", pos: "n.", meanings: ["kalp", "yürek"], def: "Organo muscolare che pompa il sangue; simbolo dei sentimenti.", rank: 82 },
+                { id: "i83", word: "notte", pos: "n.", meanings: ["gece"], def: "Intervallo di tempo compreso tra il tramonto e l'alba.", rank: 83 },
+                { id: "i84", word: "sole", pos: "n.", meanings: ["güneş"], def: "La stella luminosa al centro del nostro sistema planetario.", rank: 84 },
+                { id: "i85", word: "mare", pos: "n.", meanings: ["deniz"], def: "Grande distesa di acqua salata che ricopre gran parte della Terra.", rank: 85 },
+                { id: "i86", word: "forte", pos: "adj. / adv.", meanings: ["güçlü", "kuvvetli", "sert", "yüksek sesle"], def: "Dotato di grande energia fisica o morale; intenso.", rank: 86 },
+                { id: "i87", word: "facile", pos: "adj.", meanings: ["kolay"], def: "Che si può fare o comprendere senza sforzo né difficoltà.", rank: 87 },
+                { id: "i88", word: "difficile", pos: "adj.", meanings: ["zor", "güç"], def: "Che richiede molto impegno, abilità o attenzione per essere risolto.", rank: 88 },
+                { id: "i89", word: "caldo", pos: "adj. / n.", meanings: ["sıcak", "sıcaklık"], def: "Che ha una temperatura elevata; accogliente e affettuoso.", rank: 89 },
+                { id: "i90", word: "freddo", pos: "adj. / n.", meanings: ["soğuk"], def: "Che ha una temperatura bassa; privo di entusiasmo o calore umano.", rank: 90 },
+                { id: "i91", word: "chiaro", pos: "adj.", meanings: ["açık", "net", "berrak"], def: "Luminoso, limpido oppure facile da comprendere senza ambiguità.", rank: 91 },
+                { id: "i92", word: "libero", pos: "adj.", meanings: ["özgür", "serbest", "boş"], def: "Che non è soggetto a vincoli, restrizioni o impegni.", rank: 92 },
+                { id: "i93", word: "pronto", pos: "adj.", meanings: ["hazır", "alo"], def: "Preparato e disposto ad agire subito; formula usata al telefono.", rank: 93 },
+                { id: "i94", word: "felice", pos: "adj.", meanings: ["mutlu"], def: "Che prova gioia piena, serenità e soddisfazione interiore.", rank: 94 },
+                { id: "i95", word: "stanco", pos: "adj.", meanings: ["yorgun"], def: "Privo di forze a causa di uno sforzo fisico o mentale.", rank: 95 },
+                { id: "i96", word: "sedere", pos: "v.", meanings: ["oturmak"], def: "Prendere posto su una sedia o una superficie appoggiando il corpo.", rank: 96 },
+                { id: "i97", word: "correre", pos: "v.", meanings: ["koşmak"], def: "Muoversi molto velocemente a piedi o scorrere con rapidità.", rank: 97 },
+                { id: "i98", word: "pagare", pos: "v.", meanings: ["ödemek"], def: "Versare una somma di denaro in cambio di un bene o un servizio.", rank: 98 },
+                { id: "i99", word: "comprare", pos: "v.", meanings: ["satın almak", "almak"], def: "Acquistare qualcosa versando il prezzo stabilito.", rank: 99 },
+                { id: "i100", word: "vendere", pos: "v.", meanings: ["satmak"], def: "Cedere la proprietà di un bene in cambio di denaro.", rank: 100 }
+            ],
+            TR: [
+                { id: "t1", word: "mütevazı", pos: "adj.", meanings: [], def: "Alçak gönüllü, gösterişten uzak, kendi değerini olduğundan büyük göstermeyen.", rank: 1 },
+                { id: "t2", word: "itina", pos: "n.", meanings: [], def: "Bir işi yaparken gösterilen özen, dikkat ve titizlik.", rank: 2 },
+                { id: "t3", word: "feraset", pos: "n.", meanings: [], def: "Anlayışlılık, sezgi gücü yüksek olma ve olayların arka planını kavrayabilme yetisi.", rank: 3 },
+                { id: "t4", word: "sebat", pos: "n.", meanings: [], def: "Verilen bir karardan veya başlanan bir işten dönmeme, kararlılıkla sürdürme gücü.", rank: 4 },
+                { id: "t5", word: "vakur", pos: "adj.", meanings: [], def: "Ağırbaşlı, onurlu ve telaşsız bir duruşa sahip olan.", rank: 5 },
+                { id: "t6", word: "aşina", pos: "adj.", meanings: [], def: "Tanıdık, bildik; bir konuya veya kişiye yakınlığı ve alışkanlığı bulunan.", rank: 6 },
+                { id: "t7", word: "bariz", pos: "adj.", meanings: [], def: "Açıkça görülen, göze çarpan, belirgin ve tartışmasız.", rank: 7 },
+                { id: "t8", word: "zarafet", pos: "n.", meanings: [], def: "İncelik, kibarlık; davranış, söz veya görünüşteki ölçülü güzellik.", rank: 8 },
+                { id: "t9", word: "meşakkat", pos: "n.", meanings: [], def: "Güçlük, zahmet, katlanılması zor olan sıkıntı ve yorgunluk.", rank: 9 },
+                { id: "t10", word: "kanaat", pos: "n.", meanings: [], def: "Elindekinden hoşnut olma durumu; bir konu hakkında edinilen inanç ve görüş.", rank: 10 },
+                { id: "t11", word: "üslup", pos: "n.", meanings: [], def: "Bir sanatçının, yazarın veya kişinin kendine özgü anlatış, yapış ve davranış biçimi.", rank: 11 },
+                { id: "t12", word: "tahammül", pos: "n.", meanings: [], def: "Kötü veya güç durumlara karşı koyabilme, katlanma ve dayanma gücü.", rank: 12 },
+                { id: "t13", word: "vefa", pos: "n.", meanings: [], def: "Sevgiyi sürdürme, dostluk ve bağlılıktan ayrılmama, iyiliği unutmama.", rank: 13 },
+                { id: "t14", word: "maharet", pos: "n.", meanings: [], def: "Ustalık, beceri, bir işi incelikle ve başarıyla yapabilme yeteneği.", rank: 14 },
+                { id: "t15", word: "dingin", pos: "adj.", meanings: [], def: "Hareketsiz, sakin, durgun; zihinsel olarak huzurlu ve telaşsız.", rank: 15 },
+                { id: "t16", word: "engin", pos: "adj.", meanings: [], def: "Ucu bucağı görünmeyecek kadar geniş, derin ve kapsamlı.", rank: 16 },
+                { id: "t17", word: "gaye", pos: "n.", meanings: [], def: "Erişilmek istenen en son amaç, erek, hedef.", rank: 17 },
+                { id: "t18", word: "haslet", pos: "n.", meanings: [], def: "İnsanın yaradılışından gelen güzel huy, iyi özellik ve nitelik.", rank: 18 },
+                { id: "t19", word: "iktisat", pos: "n.", meanings: [], def: "Tutumluluk, ölçülü harcama; üretim ve tüketim ilişkilerini inceleyen bilim dalı.", rank: 19 },
+                { id: "t20", word: "lütuf", pos: "n.", meanings: [], def: "İyilik, bağış, karşılık beklemeden yapılan incelikli yardım.", rank: 20 },
+                { id: "t21", word: "nadir", pos: "adj.", meanings: [], def: "Az bulunan, seyrek rastlanan, eşine kolayca ulaşılamayan.", rank: 21 },
+                { id: "t22", word: "tedbir", pos: "n.", meanings: [], def: "Bir işi sağlama bağlamak veya olası bir zararı önlemek için önceden alınan önlem.", rank: 22 },
+                { id: "t23", word: "temenni", pos: "n.", meanings: [], def: "Bir şeyin gerçekleşmesini gönülden dileme, iyi dilekte bulunma.", rank: 23 },
+                { id: "t24", word: "berrak", pos: "adj.", meanings: [], def: "Bulanık olmayan, duru, temiz; düşünce veya anlatımda pürüzsüz ve açık.", rank: 24 },
+                { id: "t25", word: "naif", pos: "adj.", meanings: [], def: "Saf, ince, yapmacıksız; deneyimsizlikten gelen masum bir inceliğe sahip.", rank: 25 },
+                { id: "t26", word: "nezaket", pos: "n.", meanings: [], def: "Başkalarına karşı saygılı, ince ve kibar davranma durumu.", rank: 26 },
+                { id: "t27", word: "sadakat", pos: "n.", meanings: [], def: "İçten bağlılık, sağlam ve sarsılmaz dostluk veya sözünde durma.", rank: 27 },
+                { id: "t28", word: "ihtişam", pos: "n.", meanings: [], def: "Görkem, göz kamaştırıcı büyüklük ve gösterişli güzellik.", rank: 28 },
+                { id: "t29", word: "basiret", pos: "n.", meanings: [], def: "Gerçekleri yanılmadan görebilme yeteneği, uzağı görüş ve sağduyu.", rank: 29 },
+                { id: "t30", word: "sükunet", pos: "n.", meanings: [], def: "Sessizlik, dinginlik, iç huzuru ve durgunluk hali.", rank: 30 },
+                { id: "t31", word: "mukayese", pos: "n.", meanings: [], def: "İki veya daha fazla şeyi benzerlik ve ayrılıkları bakımından karşılaştırma.", rank: 31 },
+                { id: "t32", word: "teenni", pos: "n.", meanings: [], def: "Acele etmeden, iyice düşünüp taşınarak ağır ve dikkatli davranma.", rank: 32 },
+                { id: "t33", word: "müşterek", pos: "adj.", meanings: [], def: "Ortaklaşa, birden çok kimsenin birlikte paylaştığı veya yaptığı.", rank: 33 },
+                { id: "t34", word: "istikrar", pos: "n.", meanings: [], def: "Aynı kararda ve dengede sürüp gitme, sağlamlık ve düzenli devamlılık.", rank: 34 },
+                { id: "t35", word: "meziyet", pos: "n.", meanings: [], def: "Bir kişiyi veya nesneyi benzerlerinden üstün kılan değerli nitelik.", rank: 35 },
+                { id: "t36", word: "münferit", pos: "adj.", meanings: [], def: "Tek başına olan, ayrı, diğerlerinden bağımsız olarak gerçekleşen.", rank: 36 },
+                { id: "t37", word: "sirayet", pos: "n.", meanings: [], def: "Bir durumun, duygunun veya etkinin başkalarına geçmesi, yayılması.", rank: 37 },
+                { id: "t38", word: "tevekkül", pos: "n.", meanings: [], def: "Elinden gelen tüm çabayı gösterdikten sonra sonucu huzurla kabullenme.", rank: 38 },
+                { id: "t39", word: "mütalaa", pos: "n.", meanings: [], def: "Herhangi bir konu üzerinde ayrıntılı biçimde düşünme, değerlendirme ve inceleme.", rank: 39 },
+                { id: "t40", word: "dirayet", pos: "n.", meanings: [], def: "Zor işlerin üstesinden gelebilecek beceri, kavrayış ve sağlam irade.", rank: 40 }
+            ]
+        };
+
+        // 2D Circular SVG Flags (Zero Emojis)
+        const FLAGS = {
+            EN: `
+                <svg viewBox="0 0 36 36" class="w-full h-full">
+                    <rect width="36" height="36" fill="#1D4ED8"/>
+                    <path d="M0 0 L36 36 M36 0 L0 36" stroke="#FFFFFF" stroke-width="6"/>
+                    <path d="M0 0 L36 36 M36 0 L0 36" stroke="#EF4444" stroke-width="2.6"/>
+                    <path d="M18 0 V36 M0 18 H36" stroke="#FFFFFF" stroke-width="9"/>
+                    <path d="M18 0 V36 M0 18 H36" stroke="#EF4444" stroke-width="5"/>
+                </svg>
+            `,
+            IT: `
+                <svg viewBox="0 0 36 36" class="w-full h-full">
+                    <rect x="0" y="0" width="12" height="36" fill="#22C55E"/>
+                    <rect x="12" y="0" width="12" height="36" fill="#FFFFFF"/>
+                    <rect x="24" y="0" width="12" height="36" fill="#EF4444"/>
+                </svg>
+            `,
+            TR: `
+                <svg viewBox="0 0 36 36" class="w-full h-full">
+                    <rect width="36" height="36" fill="#E11D48"/>
+                    <circle cx="15.5" cy="18" r="7" fill="#FFFFFF"/>
+                    <circle cx="17.5" cy="18" r="5.6" fill="#E11D48"/>
+                    <polygon points="24.5,14.8 25.3,17.1 27.7,17.1 25.8,18.5 26.5,20.8 24.5,19.4 22.5,20.8 23.2,18.5 21.3,17.1 23.7,17.1" fill="#FFFFFF"/>
+                </svg>
+            `
+        };
+
+        const LANG_META = {
+            EN: { name: 'İngilizce', speech: 'en-US', hmColors: ['#FDE2DD', '#F9A99C', '#F46955'] },
+            IT: { name: 'İtalyanca', speech: 'it-IT', hmColors: ['#D7F1EC', '#9AD8CC', '#49B19F'] },
+            TR: { name: 'Türkçe', speech: 'tr-TR', hmColors: ['#E6E3FC', '#C0B9FA', '#847AF0'] }
+        };
+
+        // Application State
+        let currentLang = localStorage.getItem('kh_lang') || 'EN';
+        if (!DATASETS[currentLang]) currentLang = 'EN';
+        let heatmapLang = currentLang;
+        let currentView = 'home'; // 'home' | 'practice' | 'dictionary' | 'words'
+        let practiceFilter = 'all'; // 'all' | 'v' | 'n' | 'adj'
+        let dictFilter = 'all'; // 'all' | 'unread' | 'read'
+        let dictIndex = 0;
+        let wordsListTab = 'all'; // 'all' | 'learned'
+
+        let learnedWords = [];
+        let readDictWords = [];
+        let streak = parseInt(localStorage.getItem('kh_streak') || '0', 10);
+        let currentWordItem = null;
+        let isRevealed = false;
+        let isTransitioning = false;
+        let resetConfirmPending = false;
+        let resetConfirmTimer = null;
+
+        // DOM References
+        const pageTitle = document.getElementById('pageTitle');
+        const flagContainer = document.getElementById('flagContainer');
+        const langLabel = document.getElementById('langLabel');
+        const langChevron = document.getElementById('langChevron');
+        const headerProgressSub = document.getElementById('headerProgressSub');
+        const btnLangMenuToggle = document.getElementById('btnLangMenuToggle');
+        const langDropdown = document.getElementById('langDropdown');
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+        const iconMoon = document.getElementById('iconMoon');
+        const iconSun = document.getElementById('iconSun');
+        const btnSettingsToggle = document.getElementById('btnSettingsToggle');
+        const settingsPopover = document.getElementById('settingsPopover');
+        const btnResetProgress = document.getElementById('btnResetProgress');
+
+        // Views
+        const viewHome = document.getElementById('viewHome');
+        const viewPractice = document.getElementById('viewPractice');
+        const viewDictionary = document.getElementById('viewDictionary');
+        const viewWords = document.getElementById('viewWords');
+
+        // Nav Buttons
+        const navHome = document.getElementById('navHome');
+        const navPractice = document.getElementById('navPractice');
+        const navDictionary = document.getElementById('navDictionary');
+        const navWords = document.getElementById('navWords');
+
+        // Home Elements
+        const progressRingCircle = document.getElementById('progressRingCircle');
+        const progressRingPercent = document.getElementById('progressRingPercent');
+        const dailyTaskDetail = document.getElementById('dailyTaskDetail');
+        const heatmapGrid = document.getElementById('heatmapGrid');
+        const heatmapSelectedInfo = document.getElementById('heatmapSelectedInfo');
+        const heatmapTotalCount = document.getElementById('heatmapTotalCount');
+        const homeStreakDisplay = document.getElementById('homeStreakDisplay');
+        const hmLegend1 = document.getElementById('hmLegend1');
+        const hmLegend2 = document.getElementById('hmLegend2');
+        const hmLegend3 = document.getElementById('hmLegend3');
+        const hmTabs = document.querySelectorAll('.hm-tab');
+
+        const btnStartPrimary = document.getElementById('btnStartPrimary');
+        const primaryCardTitle = document.getElementById('primaryCardTitle');
+        const homeRemainingText = document.getElementById('homeRemainingText');
+        const btnCategoryOne = document.getElementById('btnCategoryOne');
+        const catOneTitle = document.getElementById('catOneTitle');
+        const catOneBadge = document.getElementById('catOneBadge');
+        const catOneCount = document.getElementById('catOneCount');
+        const btnCategoryTwo = document.getElementById('btnCategoryTwo');
+        const catTwoTitle = document.getElementById('catTwoTitle');
+        const catTwoBadge = document.getElementById('catTwoBadge');
+        const catTwoCount = document.getElementById('catTwoCount');
+        const btnBannerDictionary = document.getElementById('btnBannerDictionary');
+        const bannerTitle = document.getElementById('bannerTitle');
+        const bannerSub = document.getElementById('bannerSub');
+
+        // Practice Elements
+        const practiceTrNotice = document.getElementById('practiceTrNotice');
+        const practiceActiveWrap = document.getElementById('practiceActiveWrap');
+        const btnGoToTrDict = document.getElementById('btnGoToTrDict');
+        const wordCard = document.getElementById('wordCard');
+        const wordRank = document.getElementById('wordRank');
+        const practiceStreakBadge = document.getElementById('practiceStreakBadge');
+        const targetWord = document.getElementById('targetWord');
+        const partOfSpeech = document.getElementById('partOfSpeech');
+        const answerInput = document.getElementById('answerInput');
+        const meaningReveal = document.getElementById('meaningReveal');
+        const btnAction = document.getElementById('btnAction');
+        const btnSkip = document.getElementById('btnSkip');
+        const btnAudio = document.getElementById('btnAudio');
+        const filterPills = document.querySelectorAll('.filter-pill');
+
+        // Dictionary Elements
+        const dictFilterPills = document.querySelectorAll('.dict-filter-pill');
+        const dictCounter = document.getElementById('dictCounter');
+        const dictCard = document.getElementById('dictCard');
+        const dictRank = document.getElementById('dictRank');
+        const dictReadBadge = document.getElementById('dictReadBadge');
+        const btnDictAudio = document.getElementById('btnDictAudio');
+        const dictWord = document.getElementById('dictWord');
+        const dictPos = document.getElementById('dictPos');
+        const dictDefLabel = document.getElementById('dictDefLabel');
+        const dictDefinition = document.getElementById('dictDefinition');
+        const dictTrToggleWrap = document.getElementById('dictTrToggleWrap');
+        const btnToggleDictTr = document.getElementById('btnToggleDictTr');
+        const dictTrMeaningBox = document.getElementById('dictTrMeaningBox');
+        const btnDictPrev = document.getElementById('btnDictPrev');
+        const btnDictMarkRead = document.getElementById('btnDictMarkRead');
+        const btnDictNext = document.getElementById('btnDictNext');
+
+        // Words List Elements
+        const wordSearchInput = document.getElementById('wordSearchInput');
+        const tabWordsAll = document.getElementById('tabWordsAll');
+        const tabWordsLearned = document.getElementById('tabWordsLearned');
+        const wordListContainer = document.getElementById('wordListContainer');
+
+        // Date & Heatmap Helpers
+        function getDateKey(date = new Date()) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function formatDateTR(dateKey) {
+            const [y, m, d] = dateKey.split('-').map(Number);
+            const dt = new Date(y, m - 1, d);
+            return dt.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
+        }
+
+        function getHeatmapData(lang) {
+            try {
+                return JSON.parse(localStorage.getItem(`kh_heatmap_${lang}`)) || {};
+            } catch {
+                return {};
+            }
+        }
+
+        // Speech Synthesis (Disabled for Turkish as requested)
+        function speakWord(text, lang) {
+            if (lang === 'TR' || !('speechSynthesis' in window) || !text) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = LANG_META[lang]?.speech || 'en-US';
+            u.rate = 0.92;
+            window.speechSynthesis.speak(u);
+        }
+
+        // Theme Management (Light / Dark Mode)
+        function applyTheme(theme) {
+            const isDark = theme === 'dark';
+            document.documentElement.classList.toggle('dark', isDark);
+            iconMoon.classList.toggle('hidden', isDark);
+            iconSun.classList.toggle('hidden', !isDark);
+            const themeMeta = document.getElementById('themeColorMeta');
+            if (themeMeta) {
+                themeMeta.setAttribute('content', isDark ? '#0D111C' : '#F6F8FC');
+            }
+            localStorage.setItem('kh_theme', theme);
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('kh_theme');
+            if (saved === 'dark' || saved === 'light') {
+                applyTheme(saved);
+            } else {
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme(prefersDark ? 'dark' : 'light');
+            }
+        }
+
+        function recordHeatmapActivity(lang) {
+            const data = getHeatmapData(lang);
+            const today = getDateKey();
+            data[today] = (data[today] || 0) + 1;
+            localStorage.setItem(`kh_heatmap_${lang}`, JSON.stringify(data));
+        }
+
+        function getTodayTotalAcrossLangs() {
+            const today = getDateKey();
+            return ['EN', 'IT', 'TR'].reduce((sum, l) => sum + (getHeatmapData(l)[today] || 0), 0);
+        }
+
+        // Normalize Turkish text for forgiving matching
+        function normalizeText(text) {
+            if (!text) return '';
+            return text
+                .toString()
+                .trim()
+                .toLowerCase()
+                .replace(/i̇/g, 'i')
+                .replace(/ı/g, 'i')
+                .replace(/ş/g, 's')
+                .replace(/ğ/g, 'g')
+                .replace(/ü/g, 'u')
+                .replace(/ö/g, 'o')
+                .replace(/ç/g, 'c')
+                .replace(/[^a-z0-9]/g, '');
+        }
+
+        // Populate Dropdown Flags Once
+        document.querySelectorAll('[data-flag]').forEach(el => {
+            el.innerHTML = FLAGS[el.dataset.flag] || '';
+        });
+
+        // Load Language State
+        function loadLanguageState(lang) {
+            currentLang = lang;
+            heatmapLang = lang;
+            dictIndex = 0;
+            localStorage.setItem('kh_lang', lang);
+
+            learnedWords = JSON.parse(localStorage.getItem(`kh_learned_${lang}`)) || [];
+            readDictWords = JSON.parse(localStorage.getItem(`kh_dict_read_${lang}`)) || [];
+
+            flagContainer.innerHTML = FLAGS[lang];
+            langLabel.innerText = LANG_META[lang].name;
+
+            // Highlight active option in dropdown
+            document.querySelectorAll('.lang-option').forEach(opt => {
+                const isSelected = opt.dataset.lang === lang;
+                opt.classList.toggle('bg-appInput', isSelected);
+            });
+
+            // Sync Practice View for Turkish vs EN/IT
+            const doneLabelEl = document.getElementById('tabWordsDoneLabel');
+            if (lang === 'TR') {
+                practiceTrNotice.classList.remove('hidden');
+                practiceActiveWrap.classList.add('hidden');
+                if (doneLabelEl) doneLabelEl.innerText = 'Okunanlar';
+            } else {
+                practiceTrNotice.classList.add('hidden');
+                practiceActiveWrap.classList.remove('hidden');
+                if (doneLabelEl) doneLabelEl.innerText = 'Öğrenilenler';
+            }
+
+            updateAllMetrics();
+            if (currentView === 'practice') {
+                if (lang !== 'TR') pickNextWord();
+            } else if (currentView === 'dictionary') {
+                renderDictionaryCard();
+            } else if (currentView === 'words') {
+                renderWordList();
+            }
+        }
+
+        // Render Per-Language Heatmap (12 Weeks = 84 Days)
+        function renderHeatmap(lang) {
+            heatmapLang = lang;
+            const data = getHeatmapData(lang);
+            const colors = LANG_META[lang].hmColors;
+
+            // Update mini language tabs
+            hmTabs.forEach(tab => {
+                const active = tab.dataset.hmLang === lang;
+                tab.className = active
+                    ? 'hm-tab px-2.5 py-1 rounded-full text-[10px] font-bold bg-white text-appNavy shadow-sm transition-all'
+                    : 'hm-tab px-2.5 py-1 rounded-full text-[10px] font-bold text-appMuted transition-all';
+            });
+
+            // Legend colors
+            hmLegend1.style.backgroundColor = colors[0];
+            hmLegend2.style.backgroundColor = colors[1];
+            hmLegend3.style.backgroundColor = colors[2];
+
+            const totalDays = 84; // 12 columns x 7 rows
+            const today = new Date();
+            let totalCount = 0;
+            let cellsHtml = '';
+
+            for (let i = totalDays - 1; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(today.getDate() - i);
+                const key = getDateKey(d);
+                const count = data[key] || 0;
+                totalCount += count;
+
+                let bg = 'var(--hm-empty)';
+                if (count >= 1 && count <= 2) bg = colors[0];
+                else if (count >= 3 && count <= 5) bg = colors[1];
+                else if (count >= 6) bg = colors[2];
+
+                const isToday = i === 0;
+                cellsHtml += `
+                    <button
+                        type="button"
+                        data-date="${key}"
+                        data-count="${count}"
+                        class="hm-cell w-full aspect-square rounded-[4px] transition-transform active:scale-90 ${isToday ? 'ring-1 ring-appNavy/40' : ''}"
+                        style="background-color: ${bg};"
+                        aria-label="${formatDateTR(key)}: ${count} aktivite"
+                    ></button>
+                `;
+            }
+
+            heatmapGrid.innerHTML = cellsHtml;
+            heatmapTotalCount.innerText = totalCount;
+            heatmapSelectedInfo.innerText = `${LANG_META[lang].name} · Son 12 hafta`;
+
+            // Tap cell to inspect date count
+            heatmapGrid.querySelectorAll('.hm-cell').forEach(cell => {
+                cell.addEventListener('click', () => {
+                    const c = cell.dataset.count;
+                    const dt = formatDateTR(cell.dataset.date);
+                    heatmapSelectedInfo.innerText = `${LANG_META[lang].name} · ${dt}: ${c} aktivite`;
+                });
+            });
+        }
+
+        // Update Home & Header Metrics
+        function updateAllMetrics() {
+            const dataset = DATASETS[currentLang] || [];
+            const total = dataset.length;
+            const isTR = currentLang === 'TR';
+
+            const completedCount = isTR ? readDictWords.length : learnedWords.length;
+            const remaining = Math.max(0, total - completedCount);
+
+            headerProgressSub.innerText = isTR
+                ? `Okunan: ${completedCount} / ${total} kart`
+                : `Seviye: ${completedCount} / ${total} kelime`;
+
+            // Primary Coral Card & Lavender Banner (ALWAYS match active language!)
+            if (isTR) {
+                primaryCardTitle.innerText = 'Sözlük Kartları';
+                homeRemainingText.innerText = `${remaining} kart kaldı`;
+
+                const nounCount = dataset.filter(w => w.pos.includes('n.')).length;
+                const adjCount = dataset.filter(w => w.pos.includes('adj.')).length;
+                catOneTitle.innerText = 'İsimler';
+                catOneBadge.innerText = 'n.';
+                catOneCount.innerText = `${nounCount} kelime`;
+                catTwoTitle.innerText = 'Sıfatlar';
+                catTwoBadge.innerText = 'adj.';
+                catTwoCount.innerText = `${adjCount} kelime`;
+
+                bannerTitle.innerText = 'Türkçe Sözlük Alıştırması';
+                bannerSub.innerText = 'Seçkin Türkçe kelimelerin tanımlarını oku';
+            } else {
+                const langName = LANG_META[currentLang].name;
+                primaryCardTitle.innerText = `${langName} Pratik`;
+                homeRemainingText.innerText = `${remaining} kelime kaldı`;
+
+                const verbCount = dataset.filter(w => w.pos.includes('v.')).length;
+                const adjCount = dataset.filter(w => w.pos.includes('adj.') || w.pos.includes('n.')).length;
+                catOneTitle.innerText = 'Fiiller';
+                catOneBadge.innerText = 'v.';
+                catOneCount.innerText = `${verbCount} kelime`;
+                catTwoTitle.innerText = 'Sıfat & İsim';
+                catTwoBadge.innerText = 'adj.';
+                catTwoCount.innerText = `${adjCount} kelime`;
+
+                bannerTitle.innerText = `${langName} Sözlük Kartları`;
+                bannerSub.innerText = `${langName} kelimelerin kendi dilindeki tanımlarını oku`;
+            }
+
+            // Daily Goal Progress Ring (20 activities goal)
+            const todayTotal = getTodayTotalAcrossLangs();
+            const dailyGoal = 20;
+            const pct = Math.min(100, Math.round((todayTotal / dailyGoal) * 100));
+            const circumference = 188.5;
+            progressRingCircle.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+            progressRingPercent.innerText = `${pct}%`;
+            dailyTaskDetail.innerText = `Bugün ${todayTotal} aktivite kaydettin`;
+
+            // Streak
+            homeStreakDisplay.innerText = streak;
+            practiceStreakBadge.innerText = `Seri: ${streak}`;
+
+            // Heatmap
+            renderHeatmap(heatmapLang);
+        }
+
+        // Switch Active Tab View
+        function switchView(view) {
+            currentView = view;
+            langDropdown.classList.add('hidden');
+            langChevron.classList.remove('rotate-180');
+
+            viewHome.classList.toggle('hidden', view !== 'home');
+            viewPractice.classList.toggle('hidden', view !== 'practice');
+            viewDictionary.classList.toggle('hidden', view !== 'dictionary');
+            viewWords.classList.toggle('hidden', view !== 'words');
+
+            const titles = {
+                home: 'Ana Sayfa',
+                practice: 'Pratik',
+                dictionary: 'Sözlük',
+                words: 'Kelimeler'
+            };
+            pageTitle.innerText = titles[view];
+
+            // Bottom Nav Active Styling
+            const navMap = {
+                home: navHome,
+                practice: navPractice,
+                dictionary: navDictionary,
+                words: navWords
+            };
+            Object.entries(navMap).forEach(([key, btn]) => {
+                const isActive = key === view;
+                btn.classList.toggle('text-appNavy', isActive);
+                btn.classList.toggle('text-appMuted', !isActive);
+                const label = btn.querySelector('span');
+                if (label) {
+                    label.classList.toggle('font-bold', isActive);
+                    label.classList.toggle('font-semibold', !isActive);
+                }
+            });
+
+            if (view === 'home') {
+                updateAllMetrics();
+            } else if (view === 'practice') {
+                if (currentLang !== 'TR') pickNextWord();
+            } else if (view === 'dictionary') {
+                renderDictionaryCard();
+            } else if (view === 'words') {
+                renderWordList();
+            }
+        }
+
+        // ==================== PRACTICE LOGIC (EN / IT) ====================
+        function setPracticeFilter(filter) {
+            practiceFilter = filter;
+            filterPills.forEach(pill => {
+                const active = pill.dataset.filter === filter;
+                pill.className = active
+                    ? 'filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-bold bg-appNavy text-white transition-all shrink-0'
+                    : 'filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0';
+            });
+            pickNextWord();
+        }
+
+        function pickNextWord() {
+            if (currentLang === 'TR') return;
+
+            isRevealed = false;
+            isTransitioning = false;
+            btnAction.innerText = 'Kontrol Et';
+            btnAction.disabled = false;
+            meaningReveal.classList.add('hidden');
+            meaningReveal.innerHTML = '';
+            answerInput.value = '';
+            answerInput.disabled = false;
+            wordCard.classList.remove('border-appTeal', 'border-appCoral', 'animate-shake', 'animate-pop');
+
+            const dataset = DATASETS[currentLang] || [];
+            const filtered = dataset.filter(w => {
+                if (practiceFilter === 'all') return true;
+                if (practiceFilter === 'v') return w.pos.includes('v.');
+                if (practiceFilter === 'n') return w.pos.includes('n.');
+                if (practiceFilter === 'adj') return w.pos.includes('adj.');
+                return true;
+            });
+
+            const unlearned = filtered.filter(w => !learnedWords.includes(w.id));
+
+            if (unlearned.length === 0) {
+                currentWordItem = null;
+                targetWord.innerText = 'Tamamlandı';
+                partOfSpeech.innerText = '';
+                wordRank.innerText = `${filtered.length} / ${filtered.length}`;
+                answerInput.disabled = true;
+                btnAction.disabled = true;
+                meaningReveal.innerHTML = 'Bu kategorideki tüm kelimeleri tamamladın.';
+                meaningReveal.classList.remove('hidden');
+                return;
+            }
+
+            currentWordItem = unlearned[0];
+            targetWord.innerText = currentWordItem.word;
+            partOfSpeech.innerText = `(${currentWordItem.pos})`;
+            wordRank.innerText = `#${currentWordItem.rank}`;
+
+            setTimeout(() => answerInput.focus(), 50);
+        }
+
+        function checkAnswer() {
+            if (isTransitioning || !currentWordItem || currentLang === 'TR') return;
+
+            if (isRevealed) {
+                pickNextWord();
+                return;
+            }
+
+            const userAnswer = normalizeText(answerInput.value);
+            if (!userAnswer) {
+                answerInput.focus();
+                return;
+            }
+
+            const isCorrect = currentWordItem.meanings.some(m => normalizeText(m) === userAnswer);
+
+            if (isCorrect) {
+                isTransitioning = true;
+
+                if (!learnedWords.includes(currentWordItem.id)) {
+                    learnedWords.push(currentWordItem.id);
+                    localStorage.setItem(`kh_learned_${currentLang}`, JSON.stringify(learnedWords));
+                }
+
+                streak += 1;
+                localStorage.setItem('kh_streak', String(streak));
+                recordHeatmapActivity(currentLang);
+                updateAllMetrics();
+
+                wordCard.classList.remove('animate-shake', 'border-appCoral');
+                wordCard.classList.add('animate-pop', 'border-appTeal');
+                meaningReveal.innerHTML = `<span class="text-appTeal font-bold">Doğru.</span> Anlamları: <span class="text-appNavy font-bold">${currentWordItem.meanings.join(', ')}</span>`;
+                meaningReveal.classList.remove('hidden');
+
+                setTimeout(() => {
+                    pickNextWord();
+                }, 850);
+            } else {
+                wordCard.classList.remove('animate-shake');
+                void wordCard.offsetWidth;
+                wordCard.classList.add('animate-shake', 'border-appCoral');
+
+                streak = 0;
+                localStorage.setItem('kh_streak', '0');
+                updateAllMetrics();
+
+                setTimeout(() => {
+                    wordCard.classList.remove('animate-shake', 'border-appCoral');
+                }, 420);
+
+                answerInput.select();
+            }
+        }
+
+        function revealWord() {
+            if (!currentWordItem || isTransitioning) return;
+
+            meaningReveal.innerHTML = `Anlamları: <span class="text-appNavy font-bold">${currentWordItem.meanings.join(', ')}</span>`;
+            meaningReveal.classList.remove('hidden');
+
+            streak = 0;
+            localStorage.setItem('kh_streak', '0');
+            updateAllMetrics();
+
+            isRevealed = true;
+            btnAction.innerText = 'Devam Et';
+        }
+
+        // ==================== DICTIONARY LOGIC (EN / IT / TR) ====================
+        function getFilteredDictList() {
+            const dataset = DATASETS[currentLang] || [];
+            return dataset.filter(w => {
+                const isRead = readDictWords.includes(w.id);
+                if (dictFilter === 'unread') return !isRead;
+                if (dictFilter === 'read') return isRead;
+                return true;
+            });
+        }
+
+        function setDictFilter(filter) {
+            dictFilter = filter;
+            dictIndex = 0;
+            dictFilterPills.forEach(pill => {
+                const active = pill.dataset.dictFilter === filter;
+                pill.className = active
+                    ? 'dict-filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-bold bg-appNavy text-white transition-all shrink-0'
+                    : 'dict-filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0';
+            });
+            renderDictionaryCard();
+        }
+
+        function renderDictionaryCard() {
+            const list = getFilteredDictList();
+            dictCard.classList.remove('animate-pop', 'border-appTeal');
+            dictTrMeaningBox.classList.add('hidden');
+            btnToggleDictTr.innerText = 'Türkçe karşılığını göster';
+
+            if (list.length === 0) {
+                dictCounter.innerText = '0 / 0';
+                dictRank.innerText = '-';
+                dictReadBadge.classList.add('hidden');
+                dictWord.innerText = 'Kart yok';
+                dictPos.innerText = '';
+                dictDefinition.innerText = 'Bu filtrede gösterilecek sözlük kartı bulunmuyor.';
+                dictTrToggleWrap.classList.add('hidden');
+                btnDictMarkRead.disabled = true;
+                btnDictMarkRead.classList.add('opacity-50');
+                return;
+            }
+
+            if (dictIndex >= list.length) dictIndex = 0;
+            if (dictIndex < 0) dictIndex = list.length - 1;
+
+            const item = list[dictIndex];
+            const isRead = readDictWords.includes(item.id);
+
+            dictCounter.innerText = `${dictIndex + 1} / ${list.length}`;
+            dictRank.innerText = `#${item.rank}`;
+            dictReadBadge.classList.toggle('hidden', !isRead);
+            btnDictAudio.classList.toggle('hidden', currentLang === 'TR');
+            dictWord.innerText = item.word;
+            dictPos.innerText = `(${item.pos})`;
+
+            const defLabels = {
+                EN: 'English Definition',
+                IT: 'Definizione Italiana',
+                TR: 'Türkçe Sözlük Tanımı'
+            };
+            dictDefLabel.innerText = defLabels[currentLang] || 'Sözlük Tanımı';
+            dictDefinition.innerText = item.def || '';
+
+            // Hide Turkish translation toggle when already in Turkish
+            if (currentLang === 'TR' || !item.meanings || item.meanings.length === 0) {
+                dictTrToggleWrap.classList.add('hidden');
+            } else {
+                dictTrToggleWrap.classList.remove('hidden');
+                dictTrMeaningBox.innerText = item.meanings.join(', ');
+            }
+
+            btnDictMarkRead.disabled = false;
+            btnDictMarkRead.classList.remove('opacity-50');
+            btnDictMarkRead.innerText = isRead ? 'Tekrar Çalıştım & Sonraki' : 'Okudum & Sonraki';
+        }
+
+        function markCurrentDictCardRead() {
+            const list = getFilteredDictList();
+            if (list.length === 0) return;
+
+            const item = list[dictIndex];
+            if (!readDictWords.includes(item.id)) {
+                readDictWords.push(item.id);
+                localStorage.setItem(`kh_dict_read_${currentLang}`, JSON.stringify(readDictWords));
+            }
+
+            streak += 1;
+            localStorage.setItem('kh_streak', String(streak));
+            recordHeatmapActivity(currentLang);
+            updateAllMetrics();
+
+            dictCard.classList.add('animate-pop', 'border-appTeal');
+            setTimeout(() => {
+                if (dictFilter !== 'unread') {
+                    dictIndex += 1;
+                }
+                renderDictionaryCard();
+            }, 260);
+        }
+
+        // ==================== WORD LIST VIEW ====================
+        function renderWordList() {
+            const dataset = DATASETS[currentLang] || [];
+            const query = normalizeText(wordSearchInput.value);
+            const isTR = currentLang === 'TR';
+
+            const items = dataset.filter(w => {
+                const isDone = isTR ? readDictWords.includes(w.id) : learnedWords.includes(w.id);
+                if (wordsListTab === 'learned' && !isDone) return false;
+                if (!query) return true;
+                return (
+                    normalizeText(w.word).includes(query) ||
+                    normalizeText(w.def).includes(query) ||
+                    (w.meanings && w.meanings.some(m => normalizeText(m).includes(query)))
+                );
+            });
+
+            if (items.length === 0) {
+                wordListContainer.innerHTML = `
+                    <div class="bg-white rounded-[22px] p-8 text-center shadow-soft">
+                        <p class="text-[13px] font-semibold text-appMuted">Gösterilecek kelime bulunamadı.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const iconBgColors = [
+                'bg-appCoralSoft text-appCoral',
+                'bg-appTeal/15 text-appTeal',
+                'bg-appLavender/15 text-appLavender',
+                'bg-appYellow/20 text-[#D99B00]'
+            ];
+
+            wordListContainer.innerHTML = items.map((w, idx) => {
+                const isDone = isTR ? readDictWords.includes(w.id) : learnedWords.includes(w.id);
+                const badgeStyle = iconBgColors[idx % iconBgColors.length];
+                const subtitle = isTR ? w.def : w.meanings.join(', ');
+                const doneText = isTR ? 'Okundu' : 'Öğrenildi';
+
+                const leadingVisual = isTR
+                    ? `
+                        <div class="w-11 h-11 rounded-[14px] ${badgeStyle} flex items-center justify-center shrink-0 text-[12px] font-extrabold">
+                            ${w.rank}
+                        </div>
+                    `
+                    : `
+                        <button onclick="speakWord('${w.word.replace(/'/g, "\\'")}', '${currentLang}')" class="w-11 h-11 rounded-[14px] ${badgeStyle} flex items-center justify-center shrink-0 transition-transform active:scale-95" aria-label="Dinle">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                    `;
+
+                return `
+                    <div class="bg-white rounded-[20px] p-4 shadow-soft flex items-center space-x-3.5">
+                        ${leadingVisual}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-semibold text-appMuted">${w.pos}</span>
+                                <span class="text-[11px] font-bold ${isDone ? 'text-appTeal' : 'text-appMuted'}">
+                                    ${isDone ? doneText : '#' + w.rank}
+                                </span>
+                            </div>
+                            <div class="text-[15px] font-bold text-appNavy truncate mt-0.5">${w.word}</div>
+                            <div class="text-[12px] font-medium text-appMuted truncate">${subtitle}</div>
+                            <div class="w-full h-1 rounded-full bg-appInput mt-2 overflow-hidden">
+                                <div class="h-full rounded-full ${isDone ? 'bg-appTeal w-full' : 'bg-appCoral/30 w-1/6'}"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        navHome.addEventListener('click', () => switchView('home'));
+        navPractice.addEventListener('click', () => switchView('practice'));
+        navDictionary.addEventListener('click', () => switchView('dictionary'));
+        navWords.addEventListener('click', () => switchView('words'));
+
+        btnGoToTrDict.addEventListener('click', () => switchView('dictionary'));
+
+        // Language Dropdown Toggle
+        btnLangMenuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isHidden = langDropdown.classList.contains('hidden');
+            langDropdown.classList.toggle('hidden', !isHidden);
+            langChevron.classList.toggle('rotate-180', isHidden);
+        });
+
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                const chosen = opt.dataset.lang;
+                langDropdown.classList.add('hidden');
+                langChevron.classList.remove('rotate-180');
+                loadLanguageState(chosen);
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!langDropdown.contains(e.target) && !btnLangMenuToggle.contains(e.target)) {
+                langDropdown.classList.add('hidden');
+                langChevron.classList.remove('rotate-180');
+            }
+        });
+
+        // Heatmap Mini Language Tabs
+        hmTabs.forEach(tab => {
+            tab.addEventListener('click', () => renderHeatmap(tab.dataset.hmLang));
+        });
+
+        // Home Bento Cards
+        btnStartPrimary.addEventListener('click', () => {
+            if (currentLang === 'TR') {
+                setDictFilter('unread');
+                switchView('dictionary');
+            } else {
+                setPracticeFilter('all');
+                switchView('practice');
+            }
+        });
+
+        btnCategoryOne.addEventListener('click', () => {
+            if (currentLang === 'TR') {
+                setDictFilter('all');
+                switchView('dictionary');
+            } else {
+                setPracticeFilter('v');
+                switchView('practice');
+            }
+        });
+
+        btnCategoryTwo.addEventListener('click', () => {
+            if (currentLang === 'TR') {
+                setDictFilter('unread');
+                switchView('dictionary');
+            } else {
+                setPracticeFilter('adj');
+                switchView('practice');
+            }
+        });
+
+        btnBannerDictionary.addEventListener('click', () => {
+            setDictFilter('all');
+            switchView('dictionary');
+        });
+
+        // Settings / Reset Progress (Two-tap safe confirmation)
+        btnThemeToggle.addEventListener('click', () => {
+            const isCurrentlyDark = document.documentElement.classList.contains('dark');
+            applyTheme(isCurrentlyDark ? 'light' : 'dark');
+        });
+
+        btnSettingsToggle.addEventListener('click', () => {
+            settingsPopover.classList.toggle('hidden');
+            settingsPopover.classList.toggle('flex');
+        });
+
+        btnResetProgress.addEventListener('click', () => {
+            if (!resetConfirmPending) {
+                resetConfirmPending = true;
+                btnResetProgress.innerText = 'Onaylamak için dokun';
+                clearTimeout(resetConfirmTimer);
+                resetConfirmTimer = setTimeout(() => {
+                    resetConfirmPending = false;
+                    btnResetProgress.innerText = 'İlerlemeyi Sıfırla';
+                }, 3000);
+                return;
+            }
+
+            clearTimeout(resetConfirmTimer);
+            resetConfirmPending = false;
+            btnResetProgress.innerText = 'İlerlemeyi Sıfırla';
+            settingsPopover.classList.add('hidden');
+            settingsPopover.classList.remove('flex');
+
+            learnedWords = [];
+            readDictWords = [];
+            streak = 0;
+            localStorage.removeItem(`kh_learned_${currentLang}`);
+            localStorage.removeItem(`kh_dict_read_${currentLang}`);
+            localStorage.removeItem(`kh_heatmap_${currentLang}`);
+            localStorage.setItem('kh_streak', '0');
+
+            updateAllMetrics();
+            if (currentView === 'practice' && currentLang !== 'TR') pickNextWord();
+            if (currentView === 'dictionary') renderDictionaryCard();
+            if (currentView === 'words') renderWordList();
+        });
+
+        // Practice Controls
+        filterPills.forEach(pill => {
+            pill.addEventListener('click', () => setPracticeFilter(pill.dataset.filter));
+        });
+
+        btnAction.addEventListener('click', checkAnswer);
+        btnSkip.addEventListener('click', revealWord);
+
+        answerInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                checkAnswer();
+            }
+        });
+
+        btnAudio.addEventListener('click', () => {
+            if (currentWordItem) speakWord(currentWordItem.word, currentLang);
+        });
+
+        // Dictionary Controls
+        dictFilterPills.forEach(pill => {
+            pill.addEventListener('click', () => setDictFilter(pill.dataset.dictFilter));
+        });
+
+        btnDictAudio.addEventListener('click', () => {
+            const list = getFilteredDictList();
+            if (list[dictIndex]) speakWord(list[dictIndex].word, currentLang);
+        });
+
+        btnToggleDictTr.addEventListener('click', () => {
+            const hidden = dictTrMeaningBox.classList.contains('hidden');
+            dictTrMeaningBox.classList.toggle('hidden', !hidden);
+            btnToggleDictTr.innerText = hidden ? 'Türkçe karşılığını gizle' : 'Türkçe karşılığını göster';
+        });
+
+        btnDictPrev.addEventListener('click', () => {
+            dictIndex -= 1;
+            renderDictionaryCard();
+        });
+
+        btnDictNext.addEventListener('click', () => {
+            dictIndex += 1;
+            renderDictionaryCard();
+        });
+
+        btnDictMarkRead.addEventListener('click', markCurrentDictCardRead);
+
+        // Words List Controls
+        wordSearchInput.addEventListener('input', renderWordList);
+
+        tabWordsAll.addEventListener('click', () => {
+            wordsListTab = 'all';
+            tabWordsAll.className = 'flex items-center space-x-1.5 text-appNavy';
+            tabWordsAll.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-appNavy"></span><span>Tüm Kelimeler</span>';
+            tabWordsLearned.className = 'flex items-center space-x-1.5 text-appMuted';
+            tabWordsLearned.innerHTML = `<span id="tabWordsDoneLabel">${currentLang === 'TR' ? 'Okunanlar' : 'Öğrenilenler'}</span>`;
+            renderWordList();
+        });
+
+        tabWordsLearned.addEventListener('click', () => {
+            wordsListTab = 'learned';
+            const lbl = currentLang === 'TR' ? 'Okunanlar' : 'Öğrenilenler';
+            tabWordsLearned.className = 'flex items-center space-x-1.5 text-appNavy';
+            tabWordsLearned.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-appNavy"></span><span id="tabWordsDoneLabel">${lbl}</span>`;
+            tabWordsAll.className = 'flex items-center space-x-1.5 text-appMuted';
+            tabWordsAll.innerHTML = '<span>Tüm Kelimeler</span>';
+            renderWordList();
+        });
+
+        // Boot App
+        function generateAppleTouchIcon() {
+            try {
+                const size = 512;
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                // Pure white square background
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, size, size);
+
+                // Centered pastel green circle (same proportion as reference logo)
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, size * 0.25, 0, Math.PI * 2);
+                ctx.fillStyle = '#A7E8BD';
+                ctx.fill();
+
+                const iconLink = document.getElementById('appleTouchIcon');
+                if (iconLink) {
+                    iconLink.href = canvas.toDataURL('image/png');
+                }
+            } catch (err) {
+                console.error('Icon generation error:', err);
+            }
+        }
+
+        window.onload = () => {
+            generateAppleTouchIcon();
+            initTheme();
+            loadLanguageState(currentLang);
+            switchView('home');
+        };
+    </script>
+</body>
+</html>
