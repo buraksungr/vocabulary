@@ -854,6 +854,469 @@
             ]
         };
 
+        // Compact high-frequency expansion packs (word|pos|turkish meanings|native definition)
+        const EXTRA_WORDS_RAW = {
+            EN: `
+show|v. / n.|göstermek,sergilemek,gösteri|To allow or cause something to be visible; a spectacle or performance.
+hear|v.|duymak,işitmek|To perceive sound with the ear.
+let|v.|izin vermek,bırakmak|To allow or permit someone to do something.
+begin|v.|başlamak,başlatmak|To start or perform the first part of an action or activity.
+help|v. / n.|yardım etmek,yardım|To make it easier for someone to do something; assistance.
+talk|v. / n.|konuşmak,sohbet etmek,konuşma|To speak in order to give information or express ideas.
+start|v. / n.|başlamak,başlatmak,başlangıç|To begin or be reckoned from a particular point in time or space.
+might|v. / n.|olabilir,güç,kudret|Used to express possibility; great and impressive power or strength.
+read|v.|okumak|To look at and comprehend the meaning of written or printed matter.
+learn|v.|öğrenmek|To gain or acquire knowledge or skill by study or experience.
+grow|v.|büyümek,yetiştirmek,artmak|To undergo natural development by increasing in size; to cultivate.
+open|v. / adj.|açmak,açık|To move so as to allow access or view; not closed or blocked.
+walk|v. / n.|yürümek,yürüyüş|To move at a regular pace by lifting and setting down each foot.
+win|v. / n.|kazanmak,galibiyet|To be successful or victorious in a contest or conflict.
+offer|v. / n.|teklif etmek,sunmak,teklif|To present or proffer something for someone to accept or reject.
+remember|v.|hatırlamak,anımsamak|To have in or be able to bring to one's mind an awareness of the past.
+love|v. / n.|sevmek,aşk,sevgi|An intense feeling of deep affection; to feel deep affection for.
+consider|v.|düşünmek,değerlendirmek,göz önünde bulundurmak|To think carefully about something, typically before making a decision.
+appear|v.|görünmek,ortaya çıkmak|To come into sight; to become visible or noticeable.
+buy|v.|satın almak,almak|To obtain in exchange for payment.
+wait|v. / n.|beklemek,bekleyiş|To stay where one is or delay action until a particular time or event.
+serve|v.|hizmet etmek,servis yapmak,yarar sağlamak|To perform duties or services for another person or organization.
+die|v.|ölmek|To stop living; to cease to exist.
+send|v.|göndermek,yollamak|To cause to go or be taken to a particular destination.
+expect|v.|beklemek,ummak|To regard something as likely to happen.
+build|v.|inşa etmek,kurmak,yapmak|To construct something by putting parts or material together.
+stay|v. / n.|kalmak,durmak,konaklama|To remain in the same place or in a specified state.
+fall|v. / n.|düşmek,sonbahar,düşüş|To move downward freely; the season between summer and winter.
+cut|v. / n.|kesmek,kesik,indirim|To make an opening or incision with a sharp tool; a reduction.
+reach|v. / n.|ulaşmak,erişmek,uzanmak|To arrive at; to stretch out an arm in a specified direction.
+kill|v.|öldürmek|To cause the death of a person, animal, or living thing.
+remain|v.|kalmak,sürmek|To continue to exist, especially after other similar things have ceased.
+suggest|v.|önermek,ima etmek|To put forward an idea or plan for consideration.
+raise|v. / n.|kaldırmak,yükseltmek,yetiştirmek,zam|To lift or move to a higher position; an increase in salary.
+pass|v. / n.|geçmek,uzatmak,geçiş|To move or cause to move in a specified direction; to succeed in an exam.
+sell|v.|satmak|To give or hand over something in exchange for money.
+require|v.|gerektirmek,ihtiyaç duymak|To need for a particular purpose; to depend on.
+report|v. / n.|bildirmek,rapor etmek,rapor|To give a spoken or written account of something observed or investigated.
+decide|v.|karar vermek|To come to a resolution in the mind as a result of consideration.
+pull|v. / n.|çekmek,çekiş|To exert force on something so as to cause movement toward oneself.
+break|v. / n.|kırmak,bozmak,mola,ara|To separate into pieces as a result of a blow; a pause in work.
+create|v.|yaratmak,oluşturmak|To bring something into existence.
+speak|v.|konuşmak|To say something in order to convey information or express a feeling.
+spend|v.|harcamak,geçirmek|To pay out money in buying goods; to pass time in a specified way.
+stop|v. / n.|durmak,durdurmak,durak|To come to an end; to cease moving or operating.
+follow|v.|takip etmek,izlemek|To go or come after a person or thing proceeding ahead.
+allow|v.|izin vermek,olanak tanımak|To let someone have or do something.
+add|v.|eklemek,toplamak|To join something to something else so as to increase size or number.
+understand|v.|anlamak,kavramak|To perceive the intended meaning of words, a language, or a speaker.
+choose|v.|seçmek,tercih etmek|To pick out someone or something as being the best or most appropriate.
+develop|v.|geliştirmek,gelişmek|To grow or cause to grow and become more mature or advanced.
+carry|v.|taşımak|To support and move someone or something from one place to another.
+drive|v. / n.|sürmek,araba kullanmak,sürüş|To operate and control the direction and speed of a motor vehicle.
+agree|v.|katılmak,anlaşmak,aynı fikirde olmak|To have the same opinion about something; to consent to do something.
+support|v. / n.|desteklemek,destek|To bear all or part of the weight of; to give assistance or approval.
+hit|v. / n.|vurmak,çarpmak,isabet|To bring one's hand or a tool into contact with something quickly and forcefully.
+produce|v. / n.|üretmek,ortaya çıkarmak,ürün|To make or manufacture from components or raw materials.
+eat|v.|yemek,yemek yemek|To put food into the mouth and chew and swallow it.
+cover|v. / n.|örtmek,kaplamak,kapak|To put something on top of or in front of in order to protect or conceal.
+catch|v. / n.|yakalamak,tutmak|To intercept and hold something which has been thrown or dropped.
+draw|v. / n.|çizmek,çekmek,beraberlik|To produce a picture or diagram by making lines; a tied game.
+hope|v. / n.|ummak,umut etmek,umut|A feeling of expectation and desire for a certain thing to happen.
+cause|v. / n.|sebep olmak,neden olmak,sebep,neden|A person or thing that gives rise to an action or condition.
+prove|v.|kanıtlamak,ispatlamak|To demonstrate the truth or existence of something by evidence.
+wear|v.|giymek,takmak,aşınmak|To have on one's body as clothing, decoration, or protection.
+close|v. / adj.|kapatmak,yakın|To move so as to cover an opening; a short distance away.
+save|v.|kaydetmek,kurtarmak,biriktirmek|To keep safe or rescue from harm; to store money or digital data.
+check|v. / n.|kontrol etmek,hesap,çek|To examine something in order to determine its accuracy or condition.
+plan|v. / n.|planlamak,plan|A detailed proposal for doing or achieving something.
+share|v. / n.|paylaşmak,pay,hisse|To have a portion of something with another or others.
+home|n. / adv.|ev,yuva|The place where one lives permanently, especially as a member of a family.
+house|n.|ev,konut|A building for human habitation.
+eye|n.|göz|Each of a pair of globular organs of sight in the head.
+head|n. / v.|baş,kafa,lider,yönelmek|The upper part of the human body; a person in charge.
+face|n. / v.|yüz,surat,yüzleşmek|The front part of a person's head; to confront and deal with.
+mind|n. / v.|zihin,akıl,umursamak|The element of a person that enables them to be aware and think.
+heart|n.|kalp,yürek,merkez|A hollow muscular organ that pumps blood; the central part.
+body|n.|vücut,beden,gövde|The physical structure of a person or an animal.
+friend|n.|arkadaş,dost|A person with whom one has a bond of mutual affection.
+father|n.|baba|A man in relation to his natural child or children.
+power|n.|güç,iktidar,enerji|The ability or capacity to do something or act in a particular way.
+hour|n.|saat|A period of time equal to a twenty-fourth part of a day.
+game|n.|oyun,maç|A form of competitive activity or sport played according to rules.
+line|n.|çizgi,hat,sıra,satır|A long, narrow mark or band; a row of people or things.
+end|n. / v.|son,bitiş,bitirmek|A final part of something, especially a period of time or activity.
+member|n.|üye|A person, animal, or plant belonging to a particular group.
+law|n.|kanun,yasa,hukuk|The system of rules which a particular country or community recognizes.
+car|n.|araba,otomobil|A road vehicle, typically with four wheels, powered by an engine.
+city|n.|şehir,kent|A large town with a significant population and infrastructure.
+name|n. / v.|isim,ad,adlandırmak|A word or set of words by which a person or thing is known.
+team|n.|takım,ekip|A group of players forming one side in a competitive game or work task.
+minute|n.|dakika,an|A period of time equal to sixty seconds.
+idea|n.|fikir,düşünce|A thought or suggestion as to a possible course of action.
+kid|n.|çocuk|A child or young person.
+information|n.|bilgi,malumat|Facts provided or learned about something or someone.
+back|n. / adv.|sırt,arka,geri|The rear surface of the human body; toward the rear.
+parent|n.|ebeveyn,anne baba|A father or mother.
+others|n.|diğerleri,başkaları|People or things that are distinct from those already mentioned.
+level|n.|seviye,düzey,kat|A position on a real or imaginary scale of amount, quantity, or quality.
+office|n.|ofis,büro,makam|A room, set of rooms, or building used as a place for commercial work.
+door|n.|kapı|A hinged, sliding, or revolving barrier at the entrance to a building or room.
+health|n.|sağlık|The state of being free from illness or injury.
+person|n.|kişi,şahıs,insan|A human being regarded as an individual.
+art|n.|sanat|The expression or application of human creative skill and imagination.
+war|n.|savaş|A state of armed conflict between different countries or groups.
+history|n.|tarih,geçmiş|The study of past events, particularly in human affairs.
+party|n.|parti,davet,taraf|A social gathering of invited guests; a political organization.
+result|n. / v.|sonuç,netice,sonuçlanmak|A thing that is caused or produced by something else; a consequence.
+morning|n.|sabah|The period of time between midnight and noon, especially from sunrise.
+reason|n. / v.|sebep,neden,akıl,mantık|A cause, explanation, or justification for an action or event.
+research|n. / v.|araştırma,araştırmak|The systematic investigation into and study of materials and sources.
+girl|n.|kız,kız çocuğu|A female child or young woman.
+guy|n.|adam,herif,arkadaş|A man or informal term for a person.
+moment|n.|an,dakika|A very brief period of time.
+air|n.|hava|The invisible gaseous substance surrounding the earth.
+teacher|n.|öğretmen|A person who teaches, especially in a school.
+force|n. / v.|güç,kuvvet,zorlamak|Strength or energy as an attribute of physical action; to compel.
+education|n.|eğitim|The process of receiving or giving systematic instruction.
+foot|n.|ayak,etek|The lower extremity of the leg below the ankle.
+boy|n.|erkek çocuk,oğlan|A male child or youth.
+age|n. / v.|yaş,çağ,yaşlanmak|The length of time that a person has lived or a thing has existed.
+policy|n.|politika,ilke,poliçe|A course or principle of action adopted or proposed by an organization.
+process|n. / v.|süreç,işlem,işlemek|A series of actions or steps taken in order to achieve a particular end.
+music|n.|müzik|Vocal or instrumental sounds combined to produce beauty of form and harmony.
+market|n.|pazar,piyasa,market|A regular gathering of people for the purchase and sale of goods.
+sense|n. / v.|duyu,anlam,his,sezmek|A faculty by which the body perceives external stimuli; a feeling.
+service|n.|hizmet,servis|The action of helping or doing work for someone.
+food|n.|yemek,yiyecek,gıda|Any nutritious substance that people or animals eat or drink.
+night|n.|gece|The period from sunset to sunrise in each twenty-four hours.
+free|adj. / v.|özgür,serbest,ücretsiz|Able to act or be done as one wishes; given without cost.
+sure|adj. / adv.|emin,kesin|Confident in what one thinks or knows; having no doubt.
+true|adj.|doğru,gerçek,sadık|In accordance with fact or reality.
+full|adj.|dolu,tam,tok|Containing or holding as much or as many as possible.
+special|adj.|özel|Better, greater, or otherwise different from what is usual.
+easy|adj.|kolay,rahat|Achieved without great effort; presenting few difficulties.
+strong|adj.|güçlü,kuvvetli,sağlam|Having the power to move heavy weights or perform demanding tasks.
+possible|adj.|mümkün,olası|Able to be done or achieved.
+whole|adj. / n.|bütün,tüm,tam|All of; entire; unbroken or undamaged.
+hard|adj. / adv.|zor,sert,sıkı|Solid, firm, and rigid; requiring a great deal of endurance or effort.
+real|adj.|gerçek,hakiki|Actually existing as a thing or occurring in fact; not imagined.
+best|adj. / adv.|en iyi|Of the most excellent or desirable type or quality.
+better|adj. / adv.|daha iyi|More desirable, satisfactory, or effective.
+bad|adj.|kötü,fena|Of poor quality or a low standard; unwelcome or unpleasant.
+simple|adj.|basit,sade,yalın|Easily understood or done; presenting no difficulty.
+happy|adj.|mutlu,sevinçli|Feeling or showing pleasure or contentment.
+ready|adj.|hazır|In a suitable state for an action or situation; fully prepared.
+short|adj.|kısa,eksik|Measuring a small distance from end to end; lasting a brief time.
+fast|adj. / adv.|hızlı,çabuk|Moving or capable of moving at high speed.
+slow|adj.|yavaş|Moving or operating at a low speed.
+hot|adj.|sıcak,acı|Having a high degree of heat or a high temperature.
+cold|adj. / n.|soğuk,nezle|Of or at a low or relatively low temperature.
+warm|adj.|ılık,sıcak,samimi|Of or at a fairly or comfortably high temperature.
+dark|adj. / n.|karanlık,koyu|With little or no light; of a deep color.
+deep|adj.|derin|Extending far down from the top or surface.
+wide|adj.|geniş|Of great or more than average width.
+heavy|adj.|ağır,yoğun|Of great weight; difficult to lift or move.
+quiet|adj.|sessiz,sakin|Making little or no noise; free from disturbance.
+clean|adj. / v.|temiz,temizlemek|Free from dirt, marks, or stains.
+safe|adj. / n.|güvenli,kasa|Protected from or not exposed to danger or risk.
+rich|adj.|zengin|Having a great deal of money or assets; abundant.
+poor|adj.|fakir,yoksul,zayıf|Lacking sufficient money to live at a comfortable standard.
+`,
+            IT: `
+arrivare|v.|varmak,ulaşmak,gelmek|Giungere a destinazione o a un punto stabilito.
+entrare|v.|girmek|Passare dall'esterno all'interno di un luogo o di uno spazio.
+uscire|v.|çıkmak|Passare dall'interno all'esterno di un luogo; andare fuori.
+partire|v.|ayrılmak,yola çıkmak|Lasciare un luogo per iniziare un viaggio o uno spostamento.
+restare|v.|kalmak|Rimanere in un luogo o in una condizione senza muoversi.
+diventare|v.|olmak,dönüşmek|Cambiare stato o condizione, trasformandosi in qualcosa di nuovo.
+sembrare|v.|görünmek,gibi görünmek|Dare l'impressione di avere una determinata qualità o aspetto.
+chiedere|v.|sormak,istemek,rica etmek|Rivolgere una domanda per sapere qualcosa o domandare un favore.
+rispondere|v.|cevap vermek,yanıtlamak|Dire o scrivere qualcosa in replica a una domanda o richiesta.
+aspettare|v.|beklemek|Rimanere in un luogo finché qualcuno arriva o qualcosa accade.
+ascoltare|v.|dinlemek|Prestare attenzione con l'udito a parole, suoni o musica.
+lavorare|v.|çalışmak|Svolgere un'attività professionale, fisica o intellettuale.
+studiare|v.|ders çalışmak,incelemek|Applicare la mente per imparare una materia o analizzare un argomento.
+giocare|v.|oynamak|Dedicarsi a un gioco o a uno sport per divertimento o competizione.
+camminare|v.|yürümek|Muoversi a piedi facendo passi regolari.
+guidare|v.|sürmek,yönlendirmek|Condurre un veicolo oppure indicare la strada a qualcuno.
+viaggiare|v.|seyahat etmek,gezmek|Spostarsi da un luogo a un altro, spesso verso paesi lontani.
+imparare|v.|öğrenmek|Acquisire nuove conoscenze o abilità attraverso lo studio o la pratica.
+insegnare|v.|öğretmek|Trasmettere conoscenze, competenze o regole a qualcuno.
+ricordare|v.|hatırlamak,anımsamak|Richiamare alla mente fatti, persone o nozioni del passato.
+dimenticare|v.|unutmak|Perdere il ricordo di qualcosa o non tenere a mente un impegno.
+iniziare|v.|başlamak,başlatmak|Dare principio a un'azione, a un lavoro o a un evento.
+finire|v.|bitirmek,bitmek|Portare a termine qualcosa o giungere alla conclusione.
+continuare|v.|devam etmek|Proseguire un'azione o un discorso senza interrompersi.
+cambiare|v.|değişmek,değiştirmek|Rendere diverso o sostituire una cosa con un'altra.
+scegliere|v.|seçmek,tercih etmek|Preferire una persona o una cosa tra più possibilità.
+decidere|v.|karar vermek|Stabilire che cosa fare dopo aver riflettuto sulle opzioni.
+aiutare|v.|yardım etmek|Prestare soccorso, sostegno o collaborazione a qualcuno.
+usare|v.|kullanmak|Impiegare uno strumento, un metodo o una risorsa per uno scopo.
+provare|v.|denemek,hissetmek,kanıtlamak|Tentare di fare qualcosa; sperimentare una sensazione.
+mostrare|v.|göstermek|Far vedere qualcosa a qualcuno affinché la osservi.
+spiegare|v.|açıklamak,anlatmak|Rendere chiaro e comprensibile un concetto o un fatto.
+raccontare|v.|anlatmak,hikaye etmek|Esporre a voce o per iscritto una storia o un avvenimento.
+incontrare|v.|buluşmak,karşılaşmak,tanışmak|Trovarsi davanti a qualcuno per caso o per appuntamento.
+seguire|v.|takip etmek,izlemek|Andare dietro a qualcuno o prestare attenzione a uno sviluppo.
+tenere|v.|tutmak,saklamak|Reggere con la mano, conservare o mantenere in uno stato.
+perdere|v.|kaybetmek|Non trovare più ciò che si aveva o subire una sconfitta.
+vincere|v.|kazanmak|Ottenere la vittoria in una gara, in un gioco o in una sfida.
+crescere|v.|büyümek,artmak|Aumentare di statura, età, dimensione o importanza.
+cadere|v.|düşmek|Scendere improvvisamente verso il basso perdendo l'equilibrio.
+tagliare|v.|kesmek|Dividere o separare qualcosa usando una lama o le forbici.
+costruire|v.|inşa etmek,kurmak|Realizzare un edificio, un oggetto o una struttura unendo più parti.
+creare|v.|yaratmak,oluşturmak|Dare origine a qualcosa di nuovo con l'ingegno o l'arte.
+inviare|v.|göndermek,yollamak|Spedire una lettera, un messaggio o un pacco a un destinatario.
+ricevere|v.|almak,teslim almak|Accogliere o entrare in possesso di qualcosa che viene mandato o offerto.
+offrire|v.|teklif etmek,sunmak,ikram etmek|Proporre o donare spontaneamente qualcosa a qualcuno.
+accettare|v.|kabul etmek|Accogliere favorevolmente una proposta, un dono o una situazione.
+rifiutare|v.|reddetmek|Non accettare ciò che viene offerto o richiesto.
+promettere|v.|söz vermek|Impegnarsi seriamente a fare o mantenere qualcosa in futuro.
+sperare|v.|ummak,umut etmek|Attendere con fiducia che si realizzi qualcosa di desiderato.
+temere|v.|korkmak,çekinmek|Provare paura o preoccupazione per un possibile pericolo.
+ridere|v.|gülmek|Esprimere allegria o divertimento con un suono della voce e del volto.
+piangere|v.|ağlamak|Versare lacrime per dolore, tristezza o forte commozione.
+sorridere|v.|gülümsemek|Mostrare gioia o simpatia con una leggera espressione delle labbra.
+cantare|v.|şarkı söylemek|Emettere con la voce suoni musicali seguendo una melodia.
+ballare|v.|dans etmek|Muovere il corpo seguendo il ritmo della musica.
+nuotare|v.|yüzmek|Muoversi nell'acqua sostenendosi a galla con braccia e gambe.
+volare|v.|uçmak|Spostarsi nell'aria con le ali o a bordo di un aereo.
+cucinare|v.|yemek pişirmek|Preparare i cibi cuocendoli per renderli pronti da mangiare.
+pulire|v.|temizlemek|Togliere lo sporco o la polvere da una superficie o da un ambiente.
+lavare|v.|yıkamak|Rendere pulito usando acqua e sapone.
+vestire|v.|giyinmek,giydirmek|Coprire il corpo con abiti e indumenti.
+svegliare|v.|uyandırmak|Far cessare il sonno a qualcuno riportandolo allo stato di veglia.
+riposare|v.|dinlenmek|Recuperare le forze fisiche o mentali interrompendo la fatica.
+padre|n.|baba|Uomo che ha generato o allevato uno o più figli.
+madre|n.|anne|Donna che ha messo al mondo o cresciuto uno o più figli.
+figlio|n.|oğul,çocuk|Persona di sesso maschile rispetto ai propri genitori.
+fratello|n.|erkek kardeş,abi|Persona di sesso maschile che ha gli stessi genitori di un'altra.
+sorella|n.|kız kardeş,abla|Persona di sesso femminile che ha gli stessi genitori di un'altra.
+bambino|n.|çocuk,bebek|Essere umano nei primi anni di vita, prima dell'adolescenza.
+ragazzo|n.|genç,delikanlı,erkek arkadaş|Giovane di età compresa tra l'infanzia e l'età adulta.
+persona|n.|kişi,şahıs,insan|Individuo della specie umana considerato nella sua singolarità.
+gente|n.|insanlar,halk|Insieme indeterminato di persone riunite o considerate collettivamente.
+nome|n.|isim,ad|Parola con cui si identifica una persona, un luogo o una cosa.
+testa|n.|baş,kafa|Parte superiore del corpo umano che contiene il cervello.
+viso|n.|yüz,surat|Parte anteriore della testa dove si trovano occhi, naso e bocca.
+bocca|n.|ağız|Apertura del volto usata per parlare, respirare e mangiare.
+voce|n.|ses|Suono prodotto dalle corde vocali umane nel parlare o cantare.
+corpo|n.|vücut,beden|Insieme delle parti fisiche che costituiscono un organismo vivente.
+piede|n.|ayak|Estremità inferiore della gamba su cui si poggia il corpo.
+mente|n.|zihin,akıl|Insieme delle facoltà intellettive, della memoria e del pensiero.
+idea|n.|fikir,düşünce|Concetto o proposta elaborata dalla mente umana.
+storia|n.|hikaye,tarih,öykü|Narrazione di eventi reali o immaginari; lo studio del passato.
+notizia|n.|haber|Informazione recente su un fatto o un avvenimento accaduto.
+musica|n.|müzik|Arte di combinare suoni e ritmi in modo armonioso.
+arte|n.|sanat|Attività creativa umana che esprime bellezza, idee ed emozioni.
+scuola|n.|okul|Istituzione dedicata all'istruzione e alla formazione degli studenti.
+studio|n.|çalışma,stüdyo,inceleme|Attività di apprendimento o locale adibito al lavoro intellettuale.
+ufficio|n.|ofis,büro|Locale in cui si svolgono attività amministrative o professionali.
+stanza|n.|oda|Ambiente chiuso da pareti all'interno di una casa o di un edificio.
+porta|n.|kapı|Apertura munita di battente che permette di entrare o uscire.
+finestra|n.|pencere|Apertura in una parete che lascia entrare luce e aria.
+tavolo|n.|masa|Mobile costituito da un piano orizzontale sostenuto da gambe.
+sedia|n.|sandalye|Mobile dotato di schienale su cui si siede una sola persona.
+letto|n.|yatak|Mobile su cui ci si sdraia per dormire o riposare.
+cibo|n.|yemek,yiyecek,gıda|Sostanza solida o liquida che serve a nutrire gli esseri viventi.
+pane|n.|ekmek|Alimento base preparato con farina, acqua e lievito cotti al forno.
+vino|n.|şarap|Bevanda alcolica ottenuta dalla fermentazione del succo d'uva.
+caffè|n.|kahve|Bevanda aromatica ottenuta dai semi tostati dell'omonima pianta.
+latte|n.|süt|Liquido bianco nutriente prodotto dalle ghiandole mammarie.
+frutta|n.|meyve|Insieme dei frutti commestibili prodotti da alberi e piante.
+soldi|n.|para|Denaro liquido, monete o banconote usate per pagare.
+prezzo|n.|fiyat,ücret,bedel|Valore in denaro richiesto per acquistare un bene o un servizio.
+negozio|n.|mağaza,dükkan|Locale commerciale aperto al pubblico dove si vendono merci.
+mercato|n.|pazar,piyasa|Luogo di scambio e vendita di prodotti; l'insieme degli scambi economici.
+macchina|n.|araba,makine|Automobile oppure dispositivo meccanico che compie un lavoro.
+treno|n.|tren|Mezzo di trasporto composto da vagoni che viaggia su rotaie.
+aereo|n.|uçak|Velivolo dotato di ali e motori capace di volare nell'atmosfera.
+viaggio|n.|yolculuk,seyahat|Spostamento da una località a un'altra, per piacere o lavoro.
+paese|n.|ülke,köy,kasaba|Nazione con un proprio territorio oppure piccolo centro abitato.
+terra|n.|toprak,dünya,yer|Il pianeta su cui viviamo; la superficie solida del suolo.
+cielo|n.|gökyüzü,gök|Lo spazio azzurro e infinito che sovrasta la Terra.
+aria|n.|hava|Miscuglio invisibile di gas che circonda la Terra e permette di respirare.
+fuoco|n.|ateş|Fenomeno di combustione che produce calore e fiamme luminose.
+luce|n.|ışık,aydınlık|Radiazione visibile che illumina gli oggetti e permette di vedere.
+ombra|n.|gölge|Zona scura prodotta da un corpo che intercetta i raggi luminosi.
+vento|n.|rüzgar|Movimento naturale di masse d'aria nell'atmosfera.
+pioggia|n.|yağmur|Acqua che cade dalle nuvole sotto forma di gocce.
+neve|n.|kar|Precipitazione atmosferica formata da cristalli bianchi di ghiaccio.
+albero|n.|ağaç|Pianta legnosa di grandi dimensioni con tronco, rami e foglie.
+fiore|n.|çiçek|Parte colorata e spesso profumata di una pianta.
+animale|n.|hayvan|Essere vivente dotato di sensibilità e capacità di movimento.
+cane|n.|köpek|Mammifero domestico fedele, noto come il migliore amico dell'uomo.
+gatto|n.|kedi|Piccolo felino domestico agile, indipendente e affettuoso.
+mattina|n.|sabah|Prima parte della giornata, dall'alba fino a mezzogiorno.
+sera|n.|akşam|Parte del giorno compresa tra il tramonto e la notte.
+settimana|n.|hafta|Periodo composto da sette giorni consecutivi.
+mese|n.|ay|Ciascuna delle dodici parti in cui è diviso l'anno.
+minuto|n.|dakika|Unità di tempo equivalente a sessanta secondi.
+momento|n.|an,dakika|Breve intervallo di tempo o circostanza particolare.
+salute|n.|sağlık|Condizione di completo benessere fisico e mentale.
+forza|n.|güç,kuvvet|Capacità fisica o morale di compiere sforzi e resistere.
+pace|n.|barış,huzur|Condizione di armonia e assenza di guerra o conflitto.
+guerra|n.|savaş|Conflitto armato tra stati o popoli diversi.
+verità|n.|gerçek,hakikat|Conformità di un'affermazione o di un pensiero alla realtà.
+sogno|n.|rüya,hayal|Insieme di immagini vissute nel sonno; grande desiderio.
+veloce|adj.|hızlı,çabuk|Che si muove o agisce in pochissimo tempo.
+lento|adj.|yavaş|Che procede con poca rapidità o richiede molto tempo.
+breve|adj.|kısa|Di durata o estensione limitata.
+basso|adj.|alçak,kısa,düşük|Di scarsa altezza, intensità o livello.
+largo|adj.|geniş,bol|Che ha grande ampiezza in senso trasversale.
+stretto|adj.|dar,sıkı|Di poca larghezza; molto aderente o intimo.
+pesante|adj.|ağır|Che ha un peso notevole ed è faticoso da sollevare.
+leggero|adj.|hafif|Di scarso peso, delicato o facile da sopportare.
+pieno|adj.|dolu,tok|Che contiene tutto ciò che può entrare senza spazi vuoti.
+vuoto|adj.|boş|Privo di contenuto all'interno.
+pulito|adj.|temiz|Privo di macchie, polvere o impurità.
+sporco|adj.|kirli,pis|Coperto di polvere, macchie o sostanze non pulite.
+ricco|adj.|zengin|Che possiede molti beni materiali o abbondanza di qualcosa.
+povero|adj.|fakir,yoksul|Privo dei mezzi economici necessari o scarso di risorse.
+sicuro|adj.|güvenli,emin|Al riparo da pericoli oppure certo senza alcun dubbio.
+importante|adj.|önemli|Che ha grande valore, peso o rilevanza.
+semplice|adj.|basit,sade|Privo di complicazioni; facile da fare o da capire.
+strano|adj.|garip,tuhaf|Insolito, bizzarro o diverso da ciò che ci si aspetta.
+`,
+            TR: `
+kıvanç|n.||Övünç, sevinçle karışık gurur ve mutluluk duygusu.
+tebessüm|n.||Gülümseme; içten, sessiz ve yumuşak gülüş.
+emare|n.||Belirti, iz, bir durumun varlığını gösteren ipucu.
+idrak|n.||Anlama yeteneği, kavrayış, bir gerçeği tüm yönleriyle sezme.
+beyan|n.||Açıkça bildirme, sözlü veya yazılı olarak ortaya koyma.
+iştah|n.||Yemek yeme isteği; bir şeye karşı duyulan güçlü arzu.
+kudret|n.||Güç, erk, bir işi yapabilme ve yönlendirme yetisi.
+mevzu|n.||Konu, bahsedilen veya üzerinde düşünülen mesele.
+muazzam|adj.||Çok büyük, olağanüstü derecede görkemli ve etkileyici.
+müspet|adj.||Olumlu, yapıcı, faydalı sonuç doğuran.
+menfi|adj.||Olumsuz, karşıt, beklenenin aksine etki eden.
+mütemadiyen|adv.||Ara vermeden, sürekli, durmaksızın.
+nadide|adj.||Az bulunan, çok değerli, seçkin ve eşsiz.
+rızık|n.||Yaşamı sürdürmek için gerekli olan nimet, geçim kaynağı.
+sade|adj.||Gösterişsiz, yalın, süsten uzak ve anlaşılır.
+salim|adj.||Sağlam, esenlikli, tehlikeden ve hatadan uzak.
+samimi|adj.||İçten, yapmacıksız, gönülden gelen.
+şefkat|n.||Sevecenlik, koruyucu ve yumuşak sevgi duygusu.
+tahlil|n.||Çözümleme; bir bütünü parçalarına ayırarak inceleme.
+tasavvur|n.||Zihinde canlandırma, göz önüne getirme, hayal etme.
+tecrübe|n.||Deneyim; yaşam boyunca edinilen bilgi ve görgü birikimi.
+tefekkür|n.||Derinlemesine düşünme, akıl yürütme ve anlam arama.
+telafi|n.||Bir eksikliği, kaybı veya zararı giderme, yerine koyma.
+temayül|n.||Eğilim, bir yöne veya düşünceye doğru meyletme.
+tenkit|n.||Eleştiri; bir eseri veya düşünceyi doğru ve eksik yönleriyle değerlendirme.
+tercih|n.||Yeğleme, birden fazla seçenek arasından birini üstün tutma.
+tesadüf|n.||Rastlantı; önceden planlanmadan kendiliğinden gelişen karşılaşma.
+teselli|n.||Avunma, üzüntüyü hafifleten söz veya destek.
+teşebbüs|n.||Girişim; bir işi gerçekleştirmek üzere harekete geçme.
+teşvik|n.||İsteklendirme, birini iyi bir işe yöneltmek için yüreklendirme.
+tevazu|n.||Alçak gönüllülük, kibir ve gösterişten uzak durma hali.
+tutarlı|adj.||Sözleri ve davranışları birbiriyle çelişmeyen, dengeli.
+ufuk|n.||Gökyüzü ile yeryüzünün birleşir gibi göründüğü çizgi; görüş genişliği.
+umut|n.||Ummaktan doğan güven duygusu, geleceğe dair olumlu beklenti.
+vakar|n.||Ağırbaşlılık, onurlu ve ölçülü duruş.
+vasıf|n.||Nitelik, bir kimseyi veya nesneyi tanımlayan belirgin özellik.
+vesile|n.||Sebep, bahane, bir olayın gerçekleşmesine aracılık eden durum.
+vicdan|n.||Kişiyi kendi davranışları hakkında yargılamaya yönelten içsel ahlak duygusu.
+yegane|adj.||Biricik, tek, eşi benzeri bulunmayan.
+yetkin|adj.||Gerekli olgunluğa ve ustalığa erişmiş, mükemmel düzeyde bilgili.
+zihin|n.||Anlama, düşünme, kavrama ve hatırlama yetilerinin bütünü.
+zuhur|n.||Ortaya çıkma, görünme, beklenmedik biçimde meydana gelme.
+aciz|adj.||Gücü bir işe yetmeyen, çaresiz kalan.
+adalet|n.||Hak ve hukuka uygunluk, herkese hak ettiğini verme ilkesi.
+ahenk|n.||Uyum, parçaların birbirini estetik biçimde tamamlaması.
+akıbet|n.||Bir işin veya sürecin varacağı son, netice.
+alaka|n.||İlgi, bağ, iki şey arasındaki ilişki.
+azim|n.||Bir işteki engelleri yenme kararlılığı ve güçlü irade.
+bağlam|n.||Bir sözün veya olayın anlam kazandığı çevre, ortam ve bütünlük.
+belagat|n.||Sözü yerinde, etkili, güzel ve kusursuz biçimde söyleme sanatı.
+beyhude|adj.||Boşuna, yararsız, sonuç vermeyen.
+bilhassa|adv.||Özellikle, en çok, başlıca.
+cazibe|n.||Çekicilik, ilgi ve hayranlık uyandıran etki.
+cehd|n.||Çaba, gayret, bir hedef uğruna harcanan yoğun emek.
+cesaret|n.||Güçlük ve tehlike karşısında yılmama, yüreklilik.
+çare|n.||Bir sorunu çözmek için başvurulan yol, çıkar yol.
+daim|adj.||Sürekli, kalıcı, kesintisiz olarak devam eden.
+deha|n.||İnsan zekasının ve yaratıcı gücünün erişebildiği en yüksek düzey.
+denge|n.||Karşıt güçlerin veya unsurların birbirini ölçülü biçimde tutması hali.
+derinlik|n.||Yüzeyden dibe olan uzaklık; düşüncede kapsam ve incelik.
+duru|adj.||Bulanıklığı olmayan, berrak, arı ve pürüzsüz.
+edep|n.||Toplum töresine uygun ölçülü, saygılı ve incelikli davranış.
+ehemmiyet|n.||Önem, değer, öncelik derecesi.
+elzem|adj.||Çok gerekli, vazgeçilmez, mutlaka bulunması gereken.
+emsal|n.||Benzer, örnek oluşturabilecek nitelikte olan durum veya kişi.
+endişe|n.||Tasa, kaygı, olası bir olumsuzluktan duyulan tedirginlik.
+erdem|n.||Ahlakın övdüğü iyi olma, doğruluk ve olgunluk niteliklerinin bütünü.
+esasen|adv.||Aslında, temelde, işin özüne bakıldığında.
+evvela|adv.||İlk önce, her şeyden önce, başlangıçta.
+fazilet|n.||Erdem, yüksek ahlaki değer ve üstün nitelik.
+fedakar|adj.||Başkalarının iyiliği için kendi çıkarından vazgeçebilen, özverili.
+ferah|adj.||İç açıcı, geniş, aydınlık ve sıkıntıdan uzak.
+fıtrat|n.||Yaradılış, bir varlığın doğuştan sahip olduğu temel yapı.
+gayret|n.||Çaba, bir işi başarmak için gösterilen istekli çalışma.
+gönül|n.||Sevgi, istek ve duyguların kaynağı sayılan iç dünya.
+hakikat|n.||Gerçek, doğruluğu tartışmasız olan öz bilgi.
+halis|adj.||Katışıksız, saf, özüne sadık.
+haysiyet|n.||Onur, özsaygı, kişinin değerini koruma bilinci.
+heves|n.||Bir şeye karşı duyulan canlı istek ve heyecan.
+hikmet|n.||Bilgelik, olayların ardındaki derin anlam ve gizli sebep.
+himaye|n.||Koruma, gözetme, kol kanat germe.
+huzur|n.||İç rahatlığı, dinginlik, kaygı ve kargaşadan uzak olma hali.
+ibret|n.||Kötü veya dikkat çekici bir olaydan çıkarılan ders.
+icra|n.||Yapma, yerine getirme, bir kararı uygulamaya koyma.
+idame|n.||Sürdürme, devam ettirme, ayakta tutma.
+iffet|n.||Ahlak kurallarına bağlılık, temizlik ve namusluluk.
+ihmal|n.||Gereken ilgi ve özeni göstermeme, savsaklama.
+ihtimal|n.||Olasılık, bir olayın gerçekleşme derecesi.
+ihtiyat|n.||İleriyi düşünerek ölçülü ve temkinli davranma.
+ikna|n.||Birini akla uygun gerekçelerle inandırma, razı etme.
+ilham|n.||Esin; yaratıcı bir düşünce veya duygunun içe doğması.
+imkan|n.||Olanak, bir şeyin gerçekleşmesini sağlayan şartlar.
+inayet|n.||Yardım, lütuf, iyilikle destek olma.
+insaf|n.||Acıma, vicdan ve adalet ölçüsüne uygun davranma.
+intizam|n.||Düzen, tertip, her şeyin yerli yerinde olması.
+irade|n.||Bir şeyi yapıp yapmamaya karar verme ve uygulama gücü.
+isabet|n.||Hedefi tam bulma; yerinde ve doğru karar verme.
+istidat|n.||Yetenek, bir işi öğrenmeye ve başarmaya olan doğal yatkınlık.
+iştiyak|n.||Güçlü özlem, derin arzu ve kavuşma isteği.
+itibar|n.||Saygınlık, güvenilirlik ve toplum gözündeki değer.
+itidal|n.||Ölçülülük, aşırılıktan kaçınma, soğukkanlılık.
+izahat|n.||Açıklama, bir konuyu aydınlatmak için verilen ayrıntılı bilgi.
+kabiliyet|n.||Yetenek, bir işi başarıyla yapabilme yatkınlığı.
+kadim|adj.||Çok eski çağlardan beri var olan, köklü.
+kafi|adj.||Yeterli, gereksinimi tam olarak karşılayan.
+kanıt|n.||Bir gerçeği veya iddiayı doğrulayan somut belge ya da iz.
+kavrayış|n.||Anlama, bir konunun özünü hızla sezme yetisi.
+kıstas|n.||Ölçüt, değerlendirme yaparken esas alınan temel kural.
+liyakat|n.||Bir görevi layıkıyla yapabilme yeterliliği ve hak ediş.
+makul|adj.||Akla ve mantığa uygun, ölçülü, aşırı olmayan.
+`
+        };
+
+        (function hydrateExtraWords() {
+            const prefixMap = { EN: 'e', IT: 'i', TR: 't' };
+            Object.keys(EXTRA_WORDS_RAW).forEach(lang => {
+                const lines = EXTRA_WORDS_RAW[lang].trim().split('\n');
+                const target = DATASETS[lang];
+                const prefix = prefixMap[lang];
+                lines.forEach(rawLine => {
+                    const line = rawLine.trim();
+                    if (!line) return;
+                    const parts = line.split('|');
+                    if (parts.length < 4) return;
+                    const [word, pos, meaningsStr, def] = parts;
+                    const nextRank = target.length + 1;
+                    const meanings = meaningsStr
+                        ? meaningsStr.split(',').map(s => s.trim()).filter(Boolean)
+                        : [];
+                    target.push({
+                        id: `${prefix}${nextRank}`,
+                        word: word.trim(),
+                        pos: pos.trim(),
+                        meanings,
+                        def: def.trim(),
+                        rank: nextRank
+                    });
+                });
+            });
+        })();
+
         // 2D Circular SVG Flags (Zero Emojis)
         const FLAGS = {
             EN: `
@@ -983,6 +1446,25 @@
         const dictCounter = document.getElementById('dictCounter');
         const dictCard = document.getElementById('dictCard');
         const dictRank = document.getElementById('dictRank');
+        const dictReadBadge = document.getElementById('dictReadBadge');
+        const btnDictAudio = document.getElementById('btnDictAudio');
+        const dictWord = document.getElementById('dictWord');
+        const dictPos = document.getElementById('dictPos');
+        const dictDefLabel = document.getElementById('dictDefLabel');
+        const dictDefinition = document.getElementById('dictDefinition');
+        const dictTrToggleWrap = document.getElementById('dictTrToggleWrap');
+        const btnToggleDictTr = document.getElementById('btnToggleDictTr');
+        const dictTrMeaningBox = document.getElementById('dictTrMeaningBox');
+        const btnDictPrev = document.getElementById('btnDictPrev');
+        const btnDictMarkRead = document.getElementById('btnDictMarkRead');
+        const btnDictNext = document.getElementById('btnDictNext');
+
+        // Words List Elements
+        const wordSearchInput = document.getElementById('wordSearchInput');
+        const tabWordsAll = document.getElementById('tabWordsAll');
+        const tabWordsLearned = document.getElementById('tabWordsLearned');
+        const wordListContainer = document.getElementById('wordListContainer');
+
         // Speech Synthesis (iOS Safari & PWA optimized; disabled for Turkish)
         let cachedVoices = [];
         let activeUtterance = null;
@@ -1054,6 +1536,28 @@
             } else {
                 const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
                 applyTheme(prefersDark ? 'dark' : 'light');
+            }
+        }
+
+        // Date & Heatmap Helpers
+        function getDateKey(date = new Date()) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function formatDateTR(dateKey) {
+            const [y, m, d] = dateKey.split('-');
+            const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+            return `${parseInt(d, 10)} ${months[parseInt(m, 10) - 1] || m} ${y}`;
+        }
+
+        function getHeatmapData(lang) {
+            try {
+                return JSON.parse(localStorage.getItem(`kh_heatmap_${lang}`)) || {};
+            } catch {
+                return {};
             }
         }
 
