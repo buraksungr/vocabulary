@@ -983,55 +983,55 @@
         const dictCounter = document.getElementById('dictCounter');
         const dictCard = document.getElementById('dictCard');
         const dictRank = document.getElementById('dictRank');
-        const dictReadBadge = document.getElementById('dictReadBadge');
-        const btnDictAudio = document.getElementById('btnDictAudio');
-        const dictWord = document.getElementById('dictWord');
-        const dictPos = document.getElementById('dictPos');
-        const dictDefLabel = document.getElementById('dictDefLabel');
-        const dictDefinition = document.getElementById('dictDefinition');
-        const dictTrToggleWrap = document.getElementById('dictTrToggleWrap');
-        const btnToggleDictTr = document.getElementById('btnToggleDictTr');
-        const dictTrMeaningBox = document.getElementById('dictTrMeaningBox');
-        const btnDictPrev = document.getElementById('btnDictPrev');
-        const btnDictMarkRead = document.getElementById('btnDictMarkRead');
-        const btnDictNext = document.getElementById('btnDictNext');
+        // Speech Synthesis (iOS Safari & PWA optimized; disabled for Turkish)
+        let cachedVoices = [];
+        let activeUtterance = null;
 
-        // Words List Elements
-        const wordSearchInput = document.getElementById('wordSearchInput');
-        const tabWordsAll = document.getElementById('tabWordsAll');
-        const tabWordsLearned = document.getElementById('tabWordsLearned');
-        const wordListContainer = document.getElementById('wordListContainer');
-
-        // Date & Heatmap Helpers
-        function getDateKey(date = new Date()) {
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
-
-        function formatDateTR(dateKey) {
-            const [y, m, d] = dateKey.split('-').map(Number);
-            const dt = new Date(y, m - 1, d);
-            return dt.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
-        }
-
-        function getHeatmapData(lang) {
-            try {
-                return JSON.parse(localStorage.getItem(`kh_heatmap_${lang}`)) || {};
-            } catch {
-                return {};
+        function loadVoices() {
+            if ('speechSynthesis' in window) {
+                cachedVoices = window.speechSynthesis.getVoices() || [];
             }
         }
 
-        // Speech Synthesis (Disabled for Turkish as requested)
+        if ('speechSynthesis' in window) {
+            loadVoices();
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
         function speakWord(text, lang) {
             if (lang === 'TR' || !('speechSynthesis' in window) || !text) return;
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = LANG_META[lang]?.speech || 'en-US';
-            u.rate = 0.92;
-            window.speechSynthesis.speak(u);
+            try {
+                const synth = window.speechSynthesis;
+                if (synth.paused) synth.resume();
+                if (synth.speaking || synth.pending) {
+                    synth.cancel();
+                }
+
+                const targetLang = LANG_META[lang]?.speech || 'en-US';
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = targetLang;
+                u.rate = 0.92;
+                u.volume = 1;
+
+                // Match an available system voice explicitly for iOS reliability
+                const voices = cachedVoices.length ? cachedVoices : synth.getVoices();
+                if (voices && voices.length) {
+                    const langPrefix = targetLang.split('-')[0].toLowerCase();
+                    const exactMatch = voices.find(v => v.lang && v.lang.toLowerCase() === targetLang.toLowerCase());
+                    const prefixMatch = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(langPrefix));
+                    if (exactMatch || prefixMatch) {
+                        u.voice = exactMatch || prefixMatch;
+                    }
+                }
+
+                activeUtterance = u;
+                u.onend = () => { activeUtterance = null; };
+                u.onerror = () => { activeUtterance = null; };
+
+                synth.speak(u);
+            } catch (err) {
+                console.error('Speech error:', err);
+            }
         }
 
         // Theme Management (Light / Dark Mode)
