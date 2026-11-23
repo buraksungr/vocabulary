@@ -438,6 +438,29 @@
         <!-- ==================== VIEW 3: SÖZLÜK (DICTIONARY CARDS) ==================== -->
         <section id="viewDictionary" class="px-6 flex-1 flex flex-col justify-center hidden">
 
+            <!-- Sözlük Arama Kutusu -->
+            <div class="relative mb-3 z-20">
+                <svg class="w-4 h-4 text-appMuted absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                    type="text"
+                    id="dictSearchInput"
+                    placeholder="Sözlükte kelime veya anlam ara..."
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    class="w-full pl-11 pr-10 py-3 bg-white rounded-[18px] shadow-soft text-[13px] font-medium text-appNavy placeholder-appMuted focus:outline-none focus:ring-2 focus:ring-appCoral/30"
+                >
+                <button id="btnClearDictSearch" type="button" class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-appInput text-appMuted hover:text-appNavy flex items-center justify-center transition-colors" aria-label="Aramayı temizle">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div id="dictSearchResults" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-[20px] shadow-nav border border-slate-100 max-h-64 overflow-y-auto z-30"></div>
+            </div>
+
             <!-- Dictionary Filter Pills -->
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center space-x-2 overflow-x-auto pb-1">
@@ -3950,6 +3973,9 @@ lüzum|n.||Gereklilik, bir şeyin varlığına duyulan zorunlu ihtiyaç.
         const btnDictPrev = document.getElementById('btnDictPrev');
         const btnDictMarkRead = document.getElementById('btnDictMarkRead');
         const btnDictNext = document.getElementById('btnDictNext');
+        const dictSearchInput = document.getElementById('dictSearchInput');
+        const btnClearDictSearch = document.getElementById('btnClearDictSearch');
+        const dictSearchResults = document.getElementById('dictSearchResults');
 
         // Words List Elements
         const wordSearchInput = document.getElementById('wordSearchInput');
@@ -4803,6 +4829,103 @@ lüzum|n.||Gereklilik, bir şeyin varlığına duyulan zorunlu ihtiyaç.
         });
 
         btnDictMarkRead.addEventListener('click', markCurrentDictCardRead);
+
+        function clearDictSearch() {
+            dictSearchInput.value = '';
+            btnClearDictSearch.classList.add('hidden');
+            dictSearchResults.classList.add('hidden');
+            dictSearchResults.innerHTML = '';
+        }
+
+        function openDictWordById(wordId) {
+            const dataset = DATASETS[currentLang] || [];
+            const idx = dataset.findIndex(w => w.id === wordId);
+            if (idx === -1) return;
+
+            if (dictFilter !== 'all') {
+                dictFilter = 'all';
+                dictFilterPills.forEach(pill => {
+                    const active = pill.dataset.dictFilter === 'all';
+                    pill.className = active
+                        ? 'dict-filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-bold bg-appNavy text-appBg transition-all shrink-0'
+                        : 'dict-filter-pill px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white text-appMuted shadow-soft transition-all shrink-0';
+                });
+            }
+
+            dictIndex = idx;
+            clearDictSearch();
+            renderDictionaryCard();
+            dictCard.classList.add('animate-pop');
+        }
+
+        function renderDictSearchResults() {
+            const query = normalizeText(dictSearchInput.value);
+
+            if (!query) {
+                btnClearDictSearch.classList.add('hidden');
+                dictSearchResults.classList.add('hidden');
+                dictSearchResults.innerHTML = '';
+                return;
+            }
+
+            btnClearDictSearch.classList.remove('hidden');
+            const dataset = DATASETS[currentLang] || [];
+            const isTR = currentLang === 'TR';
+
+            const matches = dataset
+                .filter(w =>
+                    normalizeText(w.word).includes(query) ||
+                    normalizeText(w.def).includes(query) ||
+                    (w.meanings && w.meanings.some(m => normalizeText(m).includes(query)))
+                )
+                .sort((a, b) => {
+                    const aStart = normalizeText(a.word).startsWith(query) ? 0 : 1;
+                    const bStart = normalizeText(b.word).startsWith(query) ? 0 : 1;
+                    return aStart - bStart;
+                })
+                .slice(0, 30);
+
+            if (matches.length === 0) {
+                dictSearchResults.innerHTML = `
+                    <div class="px-4 py-4 text-center text-[12px] font-semibold text-appMuted">
+                        Eşleşen kelime bulunamadı.
+                    </div>
+                `;
+            } else {
+                dictSearchResults.innerHTML = matches.map(w => {
+                    const sub = isTR ? w.def : (w.meanings && w.meanings.length ? w.meanings.join(', ') : w.def);
+                    return `
+                        <button type="button" data-word-id="${w.id}" class="dict-search-item w-full text-left px-4 py-3 hover:bg-appInput transition-colors border-b border-slate-100 last:border-b-0">
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-[14px] font-bold text-appNavy">${w.word}</span>
+                                <span class="text-[11px] font-semibold text-appMuted">(${w.pos})</span>
+                            </div>
+                            <p class="text-[12px] font-medium text-appMuted truncate mt-0.5">${sub}</p>
+                        </button>
+                    `;
+                }).join('');
+
+                dictSearchResults.querySelectorAll('.dict-search-item').forEach(btn => {
+                    btn.addEventListener('click', () => openDictWordById(btn.dataset.wordId));
+                });
+            }
+
+            dictSearchResults.classList.remove('hidden');
+        }
+
+        dictSearchInput.addEventListener('input', renderDictSearchResults);
+        btnClearDictSearch.addEventListener('click', () => {
+            clearDictSearch();
+            dictSearchInput.focus();
+        });
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            opt.addEventListener('click', clearDictSearch);
+        });
+        document.addEventListener('click', (e) => {
+            if (!dictSearchResults.contains(e.target) && !dictSearchInput.contains(e.target) && !btnClearDictSearch.contains(e.target)) {
+                dictSearchResults.classList.add('hidden');
+            }
+        });
 
         // Words List Controls
         wordSearchInput.addEventListener('input', renderWordList);
