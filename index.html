@@ -1324,10 +1324,14 @@
             isTransitioning = false;
             btnAction.innerText = 'Kontrol Et';
             btnAction.disabled = false;
+            btnAction.classList.remove('bg-appTeal');
+            btnAction.classList.add('bg-appCoral');
+            btnSkip.classList.remove('hidden');
             meaningReveal.classList.add('hidden');
             meaningReveal.innerHTML = '';
             answerInput.value = '';
             answerInput.disabled = false;
+            answerInput.readOnly = false;
             wordCard.classList.remove('border-appTeal', 'border-appCoral', 'animate-shake', 'animate-pop');
 
             const dataset = DATASETS[currentLang] || [];
@@ -1378,8 +1382,6 @@
             const isCorrect = currentWordItem.meanings.some(m => normalizeText(m) === userAnswer);
 
             if (isCorrect) {
-                isTransitioning = true;
-
                 if (!learnedWords.includes(currentWordItem.id)) {
                     learnedWords.push(currentWordItem.id);
                     localStorage.setItem(`kh_learned_${currentLang}`, JSON.stringify(learnedWords));
@@ -1395,9 +1397,12 @@
                 meaningReveal.innerHTML = `<span class="text-appTeal font-bold">Doğru.</span> Anlamları: <span class="text-appNavy font-bold">${currentWordItem.meanings.join(', ')}</span>`;
                 meaningReveal.classList.remove('hidden');
 
-                setTimeout(() => {
-                    pickNextWord();
-                }, 850);
+                isRevealed = true;
+                answerInput.readOnly = true;
+                btnAction.innerText = 'Devam Et';
+                btnAction.classList.remove('bg-appCoral');
+                btnAction.classList.add('bg-appTeal');
+                btnSkip.classList.add('hidden');
             } else {
                 wordCard.classList.remove('animate-shake');
                 void wordCard.offsetWidth;
@@ -1416,7 +1421,7 @@
         }
 
         function revealWord() {
-            if (!currentWordItem || isTransitioning) return;
+            if (!currentWordItem || isTransitioning || isRevealed) return;
 
             meaningReveal.innerHTML = `Anlamları: <span class="text-appNavy font-bold">${currentWordItem.meanings.join(', ')}</span>`;
             meaningReveal.classList.remove('hidden');
@@ -1426,7 +1431,9 @@
             updateAllMetrics();
 
             isRevealed = true;
+            answerInput.readOnly = true;
             btnAction.innerText = 'Devam Et';
+            btnSkip.classList.add('hidden');
         }
 
         // ==================== DICTIONARY LOGIC (EN / IT / TR) ====================
